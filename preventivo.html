@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Richiedi un Preventivo — Cosytec</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="icon" href="assets/img/favicon-32.png">
+<link rel="stylesheet" href="assets/css/style.css?v=2">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="container">
+    <div class="topbar-links">
+      <a href="tel:0916371137"><i class="fa-solid fa-phone"></i> 091 637 1137</a>
+      <a href="mailto:info@cosytec.it"><i class="fa-solid fa-envelope"></i> info@cosytec.it</a>
+      <a href="chi-siamo.html#dove"><i class="fa-solid fa-location-dot"></i> Via Sant'Antonio, 49 — Bagheria</a>
+    </div>
+    <div class="topbar-social">
+      <a href="#"><i class="fa-brands fa-facebook"></i></a>
+      <a href="#"><i class="fa-brands fa-instagram"></i></a>
+    </div>
+  </div>
+</div>
+
+<header class="nav">
+  <div class="container nav-row">
+    <a href="index.html" class="logo"><span class="mark"><img src="assets/img/logo-mark.png" alt="Cosytec"></span> COSYTEC<small>Termoidraulica &amp; Clima</small></a>
+    <nav class="main-links">
+      <a href="index.html">Home</a>
+      <a href="chi-siamo.html">Chi Siamo</a>
+      <a href="prodotti.html">Prodotti</a>
+      <a href="galleria.html">Galleria</a>
+      <a href="shop.html">Shop</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="shop.html" class="cart-btn"><i class="fa-solid fa-cart-shopping"></i><span class="cart-count">0</span></a>
+      <a href="preventivo.html" class="btn btn-primary btn-sm">Preventivo gratuito</a>
+      <button class="burger"><i class="fa-solid fa-bars"></i></button>
+    </div>
+  </div>
+</header>
+
+<div class="mobile-drawer">
+  <div class="backdrop"></div>
+  <div class="panel">
+    <button class="close-drawer"><i class="fa-solid fa-xmark"></i></button>
+    <a href="index.html">Home</a>
+    <a href="chi-siamo.html">Chi Siamo</a>
+    <a href="prodotti.html">Prodotti</a>
+    <a href="galleria.html">Galleria</a>
+    <a href="shop.html">Shop</a>
+    <a href="cassa.html">Carrello</a>
+    <a href="preventivo.html" class="btn btn-primary" style="margin-top:16px;text-align:center;border:none;">Richiedi preventivo</a>
+  </div>
+</div>
+
+<section class="page-hero">
+  <div class="container">
+    <div class="breadcrumb"><a href="index.html">Home</a> / Preventivo</div>
+    <h1>Richiedi il tuo preventivo gratuito</h1>
+    <p>Compila il form: ti ricontattiamo entro 24 ore lavorative con una proposta su misura, senza impegno.</p>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="form-wrap">
+      <div class="card-panel reveal">
+        <form id="quote-form">
+          <div class="field-row">
+            <div class="field">
+              <label>Nome</label>
+              <input type="text" placeholder="Il tuo nome" required>
+            </div>
+            <div class="field">
+              <label>Cognome</label>
+              <input type="text" placeholder="Il tuo cognome" required>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Telefono</label>
+              <input type="tel" placeholder="Es. 333 1234567" required>
+            </div>
+            <div class="field">
+              <label>Email</label>
+              <input type="email" placeholder="nome@email.it" required>
+            </div>
+          </div>
+          <div class="field">
+            <label>Tipo di servizio</label>
+            <select required>
+              <option value="">Seleziona un servizio</option>
+              <option>Riscaldamento / Caldaie</option>
+              <option>Climatizzazione Daikin</option>
+              <option>Fotovoltaico &amp; Solare</option>
+              <option>Stufe &amp; Camini</option>
+              <option>Impianti idraulici</option>
+              <option>Assistenza &amp; Manutenzione</option>
+              <option>Altro</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Descrivi la tua richiesta</label>
+            <textarea rows="4" placeholder="Raccontaci di cosa hai bisogno..."></textarea>
+          </div>
+          <div class="checkbox-row" style="margin-bottom:24px;">
+            <input type="checkbox" required>
+            <span>Acconsento al trattamento dei dati personali secondo la Privacy Policy.</span>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Invia richiesta <i class="fa-solid fa-paper-plane"></i></button>
+        </form>
+
+        <div class="form-success">
+          <div class="ic"><i class="fa-solid fa-check"></i></div>
+          <h3>Richiesta inviata con successo!</h3>
+          <p>Grazie per averci contattato. Un nostro tecnico ti ricontatterà entro 24 ore lavorative.</p>
+          <a href="index.html" class="btn btn-outline">Torna alla home</a>
+        </div>
+      </div>
+
+      <div class="reveal">
+        <span class="eyebrow ice"><i class="fa-solid fa-headset"></i> Serve aiuto subito?</span>
+        <h2>Contattaci direttamente</h2>
+        <ul class="info-list">
+          <li>
+            <span class="ic ph-warm"><i class="fa-solid fa-phone"></i></span>
+            <div><b>Telefono</b><span>091 637 1137 · 327 2326589</span></div>
+          </li>
+          <li>
+            <span class="ic ph-cool"><i class="fa-solid fa-envelope"></i></span>
+            <div><b>Email</b><span>info@cosytec.it</span></div>
+          </li>
+          <li>
+            <span class="ic ph-duo"><i class="fa-solid fa-location-dot"></i></span>
+            <div><b>Sede</b><span>Via Sant'Antonio, 49 — Bagheria (PA)</span></div>
+          </li>
+          <li>
+            <span class="ic ph-navy"><i class="fa-solid fa-clock"></i></span>
+            <div><b>Orari</b><span>Lun–Ven 9:00–13:00 / 15:30–19:30<br>Sab 9:00–13:00</span></div>
+          </li>
+        </ul>
+        <div class="ph ph-navy map-ph"><i class="fa-solid fa-map-location-dot"></i><span class="ph-label">Mappa · Bagheria (PA)</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="index.html" class="logo"><span class="mark"><img src="assets/img/logo-mark.png" alt="Cosytec"></span> COSYTEC</a>
+        <p>Termoidraulica, climatizzazione e fotovoltaico a Bagheria. Dal 1997 al servizio delle famiglie del territorio.</p>
+        <div class="footer-social">
+          <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div>
+        <h4>Link utili</h4>
+        <ul>
+          <li><a href="chi-siamo.html">Chi siamo</a></li>
+          <li><a href="prodotti.html">Prodotti</a></li>
+          <li><a href="galleria.html">Galleria</a></li>
+          <li><a href="shop.html">Shop</a></li>
+          <li><a href="preventivo.html">Preventivo</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Servizi</h4>
+        <ul>
+          <li><a href="prodotti.html#caldaie">Riscaldamento</a></li>
+          <li><a href="prodotti.html#daikin">Climatizzazione</a></li>
+          <li><a href="prodotti.html#fotovoltaico">Fotovoltaico</a></li>
+          <li><a href="prodotti.html#stufe">Stufe &amp; Camini</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contatti</h4>
+        <div class="contact-item"><i class="fa-solid fa-location-dot"></i><span>Via Sant'Antonio, 49 — Bagheria (PA)</span></div>
+        <div class="contact-item"><i class="fa-solid fa-phone"></i><span>091 637 1137 · 327 2326589</span></div>
+        <div class="contact-item"><i class="fa-solid fa-envelope"></i><span>info@cosytec.it</span></div>
+        <div class="contact-item"><i class="fa-solid fa-clock"></i><span>Lun–Ven 9:00–13:00 / 15:30–19:30<br>Sab 9:00–13:00</span></div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Cosytec S.r.l. — P.IVA 00000000000. Tutti i diritti riservati.</span>
+      <span>Privacy Policy · Cookie Policy</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>
