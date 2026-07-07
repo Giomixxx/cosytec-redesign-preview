@@ -74,10 +74,10 @@
         <h4><i class="fa-solid fa-sliders"></i> Filtra prodotti</h4>
         <div class="fgroup">
           <label style="font-weight:700; color:var(--ink-800); margin-bottom:12px;">Categoria</label>
-          <label><input type="checkbox" data-cat="daikin"> Climatizzatori Daikin</label>
+          <label><input type="checkbox" data-cat="daikin"> Climatizzatori</label>
           <label><input type="checkbox" data-cat="caldaie"> Caldaie</label>
           <label><input type="checkbox" data-cat="stufe"> Stufe &amp; Camini</label>
-          <label><input type="checkbox" data-cat="foto"> Fotovoltaico</label>
+          <label><input type="checkbox" data-cat="foto"> Fotovoltaico &amp; Solare</label>
         </div>
         <div class="fgroup">
           <label style="font-weight:700; color:var(--ink-800); margin-bottom:12px;">Prezzo massimo</label>
@@ -88,7 +88,7 @@
 
       <div>
         <div class="shop-toolbar reveal">
-          <span style="font-size:14px; color:var(--ink-500);">12 prodotti disponibili</span>
+          <span style="font-size:14px; color:var(--ink-500);">13 prodotti disponibili</span>
           <select>
             <option>Più rilevanti</option>
             <option>Prezzo crescente</option>
@@ -131,8 +131,8 @@
             </div>
           </div>
 
-          <div class="product-card reveal" data-product data-id="cald-primus" data-name="Stelbi Primus 24kW" data-price="1190" data-icon="fa-fire" data-ph="ph-duo" data-cat="caldaie">
-            <div class="ph ph-duo"><i class="fa-solid fa-fire"></i></div>
+          <div class="product-card reveal" data-product data-id="cald-primus" data-name="Stelbi Primus 24kW" data-price="1190" data-icon="fa-fire" data-ph="ph-white" data-img="assets/img/caldaia-stelbi-primus.png" data-cat="caldaie">
+            <div class="ph ph-white"><img src="assets/img/caldaia-stelbi-primus.png" alt="Caldaia Stelbi Primus"></div>
             <div class="body">
               <span class="tag">Stelbi</span>
               <h3>Caldaia Primus 24kW</h3>
@@ -142,23 +142,56 @@
             </div>
           </div>
 
-          <div class="product-card reveal" data-product data-id="stufa-canal" data-name="Eva Calòr Zelda 9,5kW" data-price="2090" data-icon="fa-fire-flame-simple" data-ph="ph-warm" data-img="assets/img/stufa-zelda.png" data-cat="stufe">
-            <div class="ph ph-white"><img src="assets/img/stufa-zelda.png" alt="Stufa a pellet Eva Calòr Zelda"></div>
+          <div class="product-card reveal" data-product data-id="cald-immergas" data-name="Immergas Victrix Tera 28kW" data-price="1990" data-icon="fa-fire-burner" data-ph="ph-white" data-img="assets/img/caldaia-immergas-victrix.png" data-cat="caldaie">
+            <div class="ph ph-white"><img src="assets/img/caldaia-immergas-victrix.png" alt="Caldaia Immergas Victrix Tera"></div>
             <div class="body">
-              <span class="tag">Stufa a pellet</span>
-              <h3>Eva Calòr Zelda 9,5kW</h3>
-              <p>Riscalda più ambienti tramite canalizzazione dell'aria.</p>
+              <span class="tag">Immergas</span>
+              <h3>Victrix Tera 28kW</h3>
+              <p>Predisposta idrogeno, con filtro ciclonico di serie.</p>
+              <div class="price-row"><span class="price">€1.990</span></div>
+              <button class="add-cart-btn"><i class="fa-solid fa-cart-plus"></i> Aggiungi al carrello</button>
+            </div>
+          </div>
+
+          <div class="product-card reveal" data-product data-id="rinnai-sensei" data-name="Rinnai Infinity Sensei" data-price="1090" data-icon="fa-droplet" data-ph="ph-white" data-img="assets/img/scaldabagno-rinnai.png" data-cat="caldaie">
+            <div class="ph ph-white"><img src="assets/img/scaldabagno-rinnai.png" alt="Scaldabagno Rinnai Infinity"></div>
+            <div class="body">
+              <span class="tag">Rinnai</span>
+              <h3>Infinity Sensei</h3>
+              <p>Scaldabagno istantaneo a condensazione, fino a 32 litri/minuto.</p>
+              <div class="price-row"><span class="price">€1.090</span></div>
+              <button class="add-cart-btn"><i class="fa-solid fa-cart-plus"></i> Aggiungi al carrello</button>
+            </div>
+          </div>
+
+          <div class="product-card reveal" data-product data-id="gree-clivia" data-name="Gree Clivia 9000 BTU" data-price="479" data-icon="fa-wind" data-ph="ph-white" data-img="assets/img/clima-gree-clivia.jpg" data-cat="daikin">
+            <div class="ph ph-white"><img src="assets/img/clima-gree-clivia.jpg" alt="Climatizzatore Gree Clivia"></div>
+            <div class="body">
+              <span class="tag">Gree</span>
+              <h3>Clivia 9000 BTU</h3>
+              <p>Ottimo rapporto qualità-prezzo, wifi integrato e gas ecologico R32.</p>
+              <div class="price-row"><span class="price">€479</span></div>
+              <button class="add-cart-btn"><i class="fa-solid fa-cart-plus"></i> Aggiungi al carrello</button>
+            </div>
+          </div>
+
+          <div class="product-card reveal" data-product data-id="stufa-biancalux" data-name="Palazzetti Ecofire Bianca Lux 12kW" data-price="2090" data-icon="fa-fire-flame-simple" data-ph="ph-white" data-img="assets/img/stufa-palazzetti-biancalux.jpeg" data-cat="stufe">
+            <div class="ph ph-white"><img src="assets/img/stufa-palazzetti-biancalux.jpeg" alt="Stufa a pellet Palazzetti Bianca Lux"></div>
+            <div class="body">
+              <span class="tag">Palazzetti</span>
+              <h3>Ecofire Bianca Lux 12kW</h3>
+              <p>Design elegante e ventilazione regolabile, per ambienti medio-grandi.</p>
               <div class="price-row"><span class="price">€2.090</span></div>
               <button class="add-cart-btn"><i class="fa-solid fa-cart-plus"></i> Aggiungi al carrello</button>
             </div>
           </div>
 
-          <div class="product-card reveal" data-product data-id="stufa-compact" data-name="Ecofire Nina 8kW" data-price="1190" data-icon="fa-mug-hot" data-ph="ph-navy" data-img="assets/img/stufa-nina.png" data-cat="stufe">
-            <div class="ph ph-white"><img src="assets/img/stufa-nina.png" alt="Stufa a pellet Palazzetti Ecofire Nina"></div>
+          <div class="product-card reveal" data-product data-id="stufa-tft-diana" data-name="TFT Diana" data-price="1190" data-icon="fa-mug-hot" data-ph="ph-cover" data-img="assets/img/stufa-tft-diana.jpg" data-cat="stufe">
+            <div class="ph ph-cover"><img src="assets/img/stufa-tft-diana.jpg" alt="Termostufa a pellet TFT Diana"></div>
             <div class="body">
-              <span class="tag">Stufa a pellet</span>
-              <h3>Ecofire Nina 8kW</h3>
-              <p>Ingombro ridotto, ideale per case piccole e medie.</p>
+              <span class="tag">TFT</span>
+              <h3>Diana</h3>
+              <p>Termostufa a pellet Made in Italy, ingombro ridotto.</p>
               <div class="price-row"><span class="price">€1.190</span></div>
               <button class="add-cart-btn"><i class="fa-solid fa-cart-plus"></i> Aggiungi al carrello</button>
             </div>
@@ -186,11 +219,11 @@
             </div>
           </div>
 
-          <div class="product-card reveal" data-product data-id="solare-termico" data-name="Pannello Solare Termico" data-price="1590" data-icon="fa-sun" data-ph="ph-warm" data-cat="foto">
-            <div class="ph ph-warm"><i class="fa-solid fa-sun"></i></div>
+          <div class="product-card reveal" data-product data-id="solare-unical" data-name="Unical L Sun 300" data-price="1590" data-icon="fa-sun" data-ph="ph-white" data-img="assets/img/solare-unical.jpg" data-cat="foto">
+            <div class="ph ph-white"><img src="assets/img/solare-unical.jpg" alt="Pannello solare termico Unical L Sun 300"></div>
             <div class="body">
-              <span class="tag">Solare termico</span>
-              <h3>Pannello Solare Termico</h3>
+              <span class="tag">Unical</span>
+              <h3>L Sun 300</h3>
               <p>Acqua calda sanitaria gratuita grazie al sole.</p>
               <div class="price-row"><span class="price">€1.590</span></div>
               <button class="add-cart-btn"><i class="fa-solid fa-cart-plus"></i> Aggiungi al carrello</button>
