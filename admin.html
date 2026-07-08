@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Area riservata — Cosytec</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="icon" href="assets/img/favicon-32.png">
+<link rel="stylesheet" href="assets/css/style.css?v=5">
+<style>
+  body{ background:var(--paper-100); }
+  .admin-wrap{ max-width:900px; margin:0 auto; padding:50px 24px 100px; }
+  .admin-header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:30px; }
+  #login-view{ max-width:420px; margin:80px auto; }
+  .admin-row{ display:flex; align-items:center; gap:16px; padding:14px; background:#fff; border-radius:var(--radius-md); border:1px solid rgba(18,24,31,.06); margin-bottom:10px; }
+  .admin-row img{ width:56px; height:56px; object-fit:contain; background:var(--paper-50); border-radius:10px; padding:4px; flex-shrink:0; }
+  .admin-row-info{ flex:1; min-width:0; }
+  .admin-row-info b{ display:block; font-size:14.5px; color:var(--ink-900); }
+  .admin-row-info span{ font-size:12.5px; color:var(--ink-300); }
+  .admin-row-actions{ display:flex; gap:8px; flex-wrap:wrap; }
+  #login-error{ display:none; background:rgba(224,65,60,.1); color:#e0413c; padding:12px 14px; border-radius:var(--radius-sm); font-size:13.5px; margin-bottom:18px; }
+  .field-row-3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+  @media (max-width:640px){ .field-row-3{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="container nav-row">
+    <a href="index.html" class="logo"><span class="mark"><img src="assets/img/logo-mark.png" alt="Cosytec"></span> COSYTEC<small>Area riservata</small></a>
+    <div class="nav-cta">
+      <a href="index.html" class="btn btn-outline btn-sm">Torna al sito</a>
+    </div>
+  </div>
+</header>
+
+<div class="admin-wrap">
+
+  <div id="login-view">
+    <div class="card-panel">
+      <h2 style="margin-bottom:6px;">Accedi</h2>
+      <p style="margin-bottom:24px;">Area riservata al personale Cosytec per la gestione dei prodotti.</p>
+      <div id="login-error"></div>
+      <form id="login-form">
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="login-email" placeholder="nome@cosytec.it" required>
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="login-password" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Accedi</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="dashboard-view" style="display:none;">
+    <div class="admin-header">
+      <div>
+        <h1 style="margin-bottom:2px;">Gestione prodotti</h1>
+        <p style="margin:0;">Connesso come <b id="admin-email"></b></p>
+      </div>
+      <button id="logout-btn" class="btn btn-outline btn-sm">Esci</button>
+    </div>
+
+    <div class="card-panel" style="margin-bottom:30px;">
+      <h3 id="form-title" style="margin-bottom:20px;">Aggiungi nuovo prodotto</h3>
+      <form id="product-form">
+        <div class="field-row">
+          <div class="field">
+            <label>Nome prodotto</label>
+            <input type="text" id="f-name" placeholder="Es. Daikin Stylish 9000 BTU" required>
+          </div>
+          <div class="field">
+            <label>Etichetta card</label>
+            <input type="text" id="f-tag" placeholder="Es. Daikin, Promo, Premium" required>
+          </div>
+        </div>
+        <div class="field-row-3">
+          <div class="field">
+            <label>Categoria</label>
+            <select id="f-category" required>
+              <option value="daikin">Climatizzatori</option>
+              <option value="caldaie">Caldaie</option>
+              <option value="stufe">Stufe &amp; Camini</option>
+              <option value="foto">Fotovoltaico &amp; Solare</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Prezzo (€)</label>
+            <input type="number" id="f-price" placeholder="Es. 549" required>
+          </div>
+          <div class="field">
+            <label>Nota prezzo</label>
+            <input type="text" id="f-priceNote" placeholder="Es. installazione esclusa">
+          </div>
+        </div>
+        <div class="field">
+          <label>Descrizione breve</label>
+          <textarea id="f-description" rows="2" placeholder="Una frase che descrive il prodotto" required></textarea>
+        </div>
+        <div class="field">
+          <label>URL immagine</label>
+          <input type="url" id="f-imageUrl" placeholder="https://..." required>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Stile immagine</label>
+            <select id="f-imageStyle">
+              <option value="white">Foto su sfondo bianco (es. foto catalogo)</option>
+              <option value="photo">Foto ritagliata su sfondo colorato</option>
+              <option value="cover">Foto ambientata a piena card</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Colore sfondo (solo per "ritagliata")</label>
+            <select id="f-accent">
+              <option value="warm">Arancio</option>
+              <option value="cool">Azzurro</option>
+              <option value="duo">Sfumato arancio-azzurro</option>
+              <option value="navy">Blu scuro</option>
+            </select>
+          </div>
+        </div>
+        <div class="flex gap-10" style="margin-top:10px;">
+          <button type="submit" id="submit-btn" class="btn btn-primary">Aggiungi prodotto</button>
+          <button type="button" id="cancel-edit-btn" class="btn btn-outline" style="display:none;">Annulla modifica</button>
+        </div>
+      </form>
+    </div>
+
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+      <h3 style="margin:0;">Prodotti pubblicati</h3>
+      <button id="seed-btn" class="btn btn-outline btn-sm">Importa prodotti di esempio</button>
+    </div>
+    <div id="products-list"></div>
+  </div>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="assets/js/firebase-config.js"></script>
+<script src="assets/js/products-data.js"></script>
+<script src="assets/js/admin.js"></script>
+</body>
+</html>
