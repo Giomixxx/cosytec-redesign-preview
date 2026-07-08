@@ -5,7 +5,7 @@
    =========================================================== */
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCNfG6BllhNRVPBLOY-WUJVQw6JC5iwDPY",
+  apiKey: "AIzaSyCNfG6BllhNRVPBL0Y-WUJVQw6JC5iwDPY",
   authDomain: "cosytec.firebaseapp.com",
   projectId: "cosytec",
   storageBucket: "cosytec.firebasestorage.app",
