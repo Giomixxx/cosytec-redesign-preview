@@ -74,26 +74,26 @@
           <div class="field-row">
             <div class="field">
               <label>Nome</label>
-              <input type="text" placeholder="Il tuo nome" required>
+              <input type="text" name="nome" placeholder="Il tuo nome" required>
             </div>
             <div class="field">
               <label>Cognome</label>
-              <input type="text" placeholder="Il tuo cognome" required>
+              <input type="text" name="cognome" placeholder="Il tuo cognome" required>
             </div>
           </div>
           <div class="field-row">
             <div class="field">
               <label>Telefono</label>
-              <input type="tel" placeholder="Es. 333 1234567" required>
+              <input type="tel" name="telefono" placeholder="Es. 333 1234567" required>
             </div>
             <div class="field">
               <label>Email</label>
-              <input type="email" placeholder="nome@email.it" required>
+              <input type="email" name="email" placeholder="nome@email.it" required>
             </div>
           </div>
           <div class="field">
             <label>Tipo di servizio</label>
-            <select required>
+            <select name="servizio" required>
               <option value="">Seleziona un servizio</option>
               <option>Riscaldamento / Caldaie</option>
               <option>Climatizzazione Daikin</option>
@@ -106,13 +106,14 @@
           </div>
           <div class="field">
             <label>Descrivi la tua richiesta</label>
-            <textarea rows="4" placeholder="Raccontaci di cosa hai bisogno..."></textarea>
+            <textarea name="messaggio" rows="4" placeholder="Raccontaci di cosa hai bisogno..."></textarea>
           </div>
           <div class="checkbox-row" style="margin-bottom:24px;">
             <input type="checkbox" required>
             <span>Acconsento al trattamento dei dati personali secondo la Privacy Policy.</span>
           </div>
-          <button type="submit" class="btn btn-primary btn-block">Invia richiesta <i class="fa-solid fa-paper-plane"></i></button>
+          <div id="quote-error" style="display:none; background:rgba(224,65,60,.1); color:#e0413c; padding:12px 14px; border-radius:var(--radius-sm); font-size:13.5px; margin-bottom:18px;"></div>
+          <button type="submit" id="quote-submit-btn" class="btn btn-primary btn-block">Invia richiesta <i class="fa-solid fa-paper-plane"></i></button>
         </form>
 
         <div class="form-success">
@@ -195,6 +196,6 @@
   </div>
 </footer>
 
-<script src="assets/js/main.js"></script>
+<script src="assets/js/main.js?v=2"></script>
 </body>
 </html>

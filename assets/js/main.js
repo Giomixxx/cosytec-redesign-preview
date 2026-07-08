@@ -150,14 +150,44 @@ function initTabs(){
   });
 }
 
-// ---------- Preventivo form (mock submit) ----------
+// ---------- Preventivo form (invio reale via Formspree) ----------
+// Sostituire con l'indirizzo del proprio form: https://formspree.io/f/xxxxxxxx
+const FORMSPREE_ENDPOINT = 'INSERISCI_ENDPOINT_FORMSPREE';
+
 function initQuoteForm(){
   const form = document.querySelector('#quote-form');
   if(!form) return;
-  form.addEventListener('submit', (e) => {
+  const errorBox = document.querySelector('#quote-error');
+  const submitBtn = document.querySelector('#quote-submit-btn');
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    form.style.display = 'none';
-    document.querySelector('.form-success').classList.add('show');
+
+    if(FORMSPREE_ENDPOINT === 'INSERISCI_ENDPOINT_FORMSPREE'){
+      errorBox.textContent = 'Invio non ancora configurato: manca l\'endpoint Formspree.';
+      errorBox.style.display = '';
+      return;
+    }
+
+    errorBox.style.display = 'none';
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Invio in corso...';
+
+    try {
+      const res = await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: new FormData(form)
+      });
+      if(!res.ok) throw new Error('Invio non riuscito');
+      form.style.display = 'none';
+      document.querySelector('.form-success').classList.add('show');
+    } catch (err) {
+      errorBox.textContent = 'Invio non riuscito. Riprova oppure chiamaci direttamente.';
+      errorBox.style.display = '';
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = 'Invia richiesta <i class="fa-solid fa-paper-plane"></i>';
+    }
   });
 }
 
