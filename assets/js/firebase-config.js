@@ -5,12 +5,12 @@
    =========================================================== */
 
 const firebaseConfig = {
-  apiKey: "INSERISCI_API_KEY",
-  authDomain: "INSERISCI_PROGETTO.firebaseapp.com",
-  projectId: "INSERISCI_PROGETTO_ID",
-  storageBucket: "INSERISCI_PROGETTO.appspot.com",
-  messagingSenderId: "INSERISCI_SENDER_ID",
-  appId: "INSERISCI_APP_ID"
+  apiKey: "AIzaSyCNfG6BllhNRVPBLOY-WUJVQw6JC5iwDPY",
+  authDomain: "cosytec.firebaseapp.com",
+  projectId: "cosytec",
+  storageBucket: "cosytec.firebasestorage.app",
+  messagingSenderId: "120235154511",
+  appId: "1:120235154511:web:5bdbdbce4a054e77bc1e3a"
 };
 
 let db = null;
