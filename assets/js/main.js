@@ -247,11 +247,45 @@ function renderCartPage(){
 function initCheckout(){
   const form = document.querySelector('#checkout-form');
   if(!form) return;
-  form.addEventListener('submit', (e) => {
+  const errorBox = document.querySelector('#checkout-error');
+  const submitBtn = document.querySelector('#checkout-submit-btn');
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    saveCart([]);
-    document.querySelector('#checkout-view').style.display = 'none';
-    document.querySelector('.order-success').classList.add('show');
+
+    if(FORMSPREE_ENDPOINT === 'INSERISCI_ENDPOINT_FORMSPREE'){
+      errorBox.textContent = 'Invio non ancora configurato: manca l\'endpoint Formspree.';
+      errorBox.style.display = '';
+      return;
+    }
+
+    errorBox.style.display = 'none';
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = 'Invio in corso...';
+
+    const cart = getCart();
+    const riepilogo = cart.map(i => `${i.name} x${i.qty} — ${euro(i.price * i.qty)}`).join('\n');
+    const formData = new FormData(form);
+    formData.append('prodotti_richiesti', riepilogo);
+    formData.append('totale_indicativo', euro(cartTotal()));
+    formData.append('_subject', 'Nuova richiesta di preventivo dallo Shop Cosytec');
+
+    try {
+      const res = await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: formData
+      });
+      if(!res.ok) throw new Error('Invio non riuscito');
+      saveCart([]);
+      document.querySelector('#checkout-view').style.display = 'none';
+      document.querySelector('.order-success').classList.add('show');
+    } catch (err) {
+      errorBox.textContent = 'Invio non riuscito. Riprova oppure chiamaci direttamente.';
+      errorBox.style.display = '';
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = 'Invia richiesta di preventivo <i class="fa-solid fa-paper-plane"></i>';
+    }
   });
 }
 
