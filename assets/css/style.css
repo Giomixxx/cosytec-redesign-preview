@@ -428,6 +428,8 @@ footer .contact-item i{ color:var(--flame-400); margin-top:3px; }
 
 .form-success{ display:none; text-align:center; padding:40px 10px; }
 .form-success.show{ display:block; }
+.order-success{ display:none; }
+.order-success.show{ display:block; }
 .form-success .ic{ width:70px; height:70px; border-radius:50%; background:var(--success); color:#fff; font-size:28px; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; }
 
 /* Gallery */
