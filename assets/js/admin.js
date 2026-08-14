@@ -48,6 +48,34 @@ function initAuth(){
   });
 
   document.getElementById('logout-btn').addEventListener('click', () => auth.signOut());
+
+  document.getElementById('forgot-password-btn').addEventListener('click', async () => {
+    const email = document.getElementById('login-email').value.trim();
+    const msgBox = document.getElementById('reset-message');
+    const errorBox = document.getElementById('login-error');
+    errorBox.style.display = 'none';
+
+    if (!email) {
+      msgBox.style.background = 'rgba(224,65,60,.1)';
+      msgBox.style.color = '#e0413c';
+      msgBox.textContent = 'Inserisci prima la tua email nel campo qui sopra, poi clicca di nuovo su "Password dimenticata?".';
+      msgBox.style.display = '';
+      return;
+    }
+
+    try {
+      await auth.sendPasswordResetEmail(email);
+      msgBox.style.background = 'rgba(31,157,99,.1)';
+      msgBox.style.color = 'var(--success)';
+      msgBox.textContent = `Ti abbiamo inviato un'email a ${email} con il link per reimpostare la password. Controlla anche nello spam.`;
+      msgBox.style.display = '';
+    } catch (err) {
+      msgBox.style.background = 'rgba(224,65,60,.1)';
+      msgBox.style.color = '#e0413c';
+      msgBox.textContent = 'Invio non riuscito: verifica che l\'email sia corretta e registrata.';
+      msgBox.style.display = '';
+    }
+  });
 }
 
 function resetForm(){
