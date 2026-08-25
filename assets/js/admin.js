@@ -180,7 +180,145 @@ function initProductForm(){
   });
 }
 
+/* ===========================================================
+   Gestione immagini del sito
+   =========================================================== */
+
+const IMAGE_SLOTS = {
+  'home': [
+    { key: 'home-01', label: 'Foto copertina (hero)' },
+    { key: 'home-02', label: 'Galleria anteprima 1' },
+    { key: 'home-03', label: 'Galleria anteprima 2' },
+    { key: 'home-04', label: 'Galleria anteprima 3' },
+    { key: 'home-05', label: 'Galleria anteprima 4' }
+  ],
+  'chi-siamo': [
+    { key: 'chi-siamo-01', label: 'Foto vetrina negozio' }
+  ],
+  'galleria': Array.from({ length: 15 }, (_, i) => ({
+    key: `galleria-${String(i + 1).padStart(2, '0')}`,
+    label: `Foto lavoro ${i + 1}`
+  }))
+};
+
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+
+function initAdminTabs(){
+  const buttons = document.querySelectorAll('.tabbar button');
+  const panels = document.querySelectorAll('.admin-panel');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.style.display = 'none');
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.panel).style.display = 'block';
+      if (btn.dataset.panel === 'panel-images') loadImageSlots();
+    });
+  });
+}
+
+async function loadImageSlots(){
+  const page = document.getElementById('image-page-select').value;
+  const slots = IMAGE_SLOTS[page] || [];
+  const listEl = document.getElementById('image-slots-list');
+  listEl.innerHTML = '<p style="color:var(--ink-300);">Caricamento...</p>';
+
+  let overrides = {};
+  try {
+    const snap = await db.collection('site_images').where('page', '==', page).get();
+    snap.forEach(doc => { overrides[doc.id] = doc.data(); });
+  } catch (err) {
+    listEl.innerHTML = '<p style="color:#e0413c;">Impossibile leggere le immagini personalizzate: verifica di aver aggiornato le regole di sicurezza Firestore per la collezione "site_images" (vedi istruzioni ricevute).</p>';
+    return;
+  }
+
+  listEl.innerHTML = slots.map(slot => {
+    const ov = overrides[slot.key];
+    const thumb = (ov && ov.url)
+      ? `<img src="${ov.url}" alt="">`
+      : `<div class="slot-placeholder"><i class="fa-solid fa-image"></i></div>`;
+    const badge = (ov && ov.url)
+      ? `<small class="badge-custom">Personalizzata</small>`
+      : `<small class="badge-default">Immagine di default</small>`;
+    return `
+      <div class="admin-row" data-slot="${slot.key}">
+        ${thumb}
+        <div class="admin-row-info">
+          <b>${slot.label}</b>
+          <span>${slot.key}</span><br>
+          ${badge}
+        </div>
+        <div class="admin-row-actions">
+          <label class="upload-label">
+            <i class="fa-solid fa-upload"></i> Carica foto
+            <input type="file" accept="image/jpeg,image/png,image/webp" style="display:none;" onchange="uploadSlotImage('${page}','${slot.key}', this)">
+          </label>
+          ${(ov && ov.url) ? `<button class="btn btn-sm" style="background:#e0413c;color:#fff;" onclick="resetSlotImage('${slot.key}')">Ripristina originale</button>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+async function uploadSlotImage(page, slotKey, input){
+  const file = input.files[0];
+  if (!file) return;
+
+  if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+    alert('Formato non supportato. Usa JPG, PNG o WEBP.');
+    input.value = '';
+    return;
+  }
+  if (file.size > MAX_IMAGE_SIZE) {
+    alert('Il file supera 5 MB. Scegli un\'immagine più leggera.');
+    input.value = '';
+    return;
+  }
+
+  const row = document.querySelector(`.admin-row[data-slot="${slotKey}"]`);
+  const actionsEl = row.querySelector('.admin-row-actions');
+  const originalHTML = actionsEl.innerHTML;
+  actionsEl.innerHTML = '<span style="font-size:13px;color:var(--ink-300);">Caricamento in corso...</span>';
+
+  try {
+    const ext = file.name.split('.').pop().toLowerCase();
+    const storagePath = `site-images/${page}/${slotKey}.${ext}`;
+    const ref = storage.ref().child(storagePath);
+    await ref.put(file);
+    const url = await ref.getDownloadURL();
+
+    await db.collection('site_images').doc(slotKey).set({
+      page, slotKey, url, storagePath,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    loadImageSlots();
+  } catch (err) {
+    alert('Caricamento non riuscito: ' + err.message);
+    actionsEl.innerHTML = originalHTML;
+  }
+}
+
+async function resetSlotImage(slotKey){
+  if (!confirm('Ripristinare l\'immagine originale per questo spazio?')) return;
+  const doc = await db.collection('site_images').doc(slotKey).get();
+  if (doc.exists) {
+    const data = doc.data();
+    if (data.storagePath) {
+      try { await storage.ref().child(data.storagePath).delete(); } catch (e) {}
+    }
+    await db.collection('site_images').doc(slotKey).delete();
+  }
+  loadImageSlots();
+}
+
+function initImagesPanel(){
+  document.getElementById('image-page-select').addEventListener('change', loadImageSlots);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initAuth();
   initProductForm();
+  initAdminTabs();
+  initImagesPanel();
 });

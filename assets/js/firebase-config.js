@@ -15,10 +15,12 @@ const firebaseConfig = {
 
 let db = null;
 let auth = null;
+let storage = null;
 try {
   firebase.initializeApp(firebaseConfig);
   db = firebase.firestore();
   auth = firebase.auth();
+  storage = firebase.storage();
 } catch (err) {
   console.warn('Firebase non configurato correttamente:', err);
 }

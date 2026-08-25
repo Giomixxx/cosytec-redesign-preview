@@ -10,7 +10,7 @@
 <link rel="icon" href="assets/img/favicon-32.png">
 <link rel="stylesheet" href="assets/css/style.css?v=6">
 </head>
-<body>
+<body data-page="home">
 
 <div class="topbar">
   <div class="container">
@@ -79,7 +79,7 @@
       </div>
     </div>
     <div class="hero-art">
-      <div class="ph ph-navy ph-cover"><img src="assets/img/hero-home.jpg?v=3" alt="Casa moderna con impianto fotovoltaico sul tetto"><span class="ph-label">Il comfort di casa, in ogni stagione</span></div>
+      <div class="ph ph-navy ph-cover"><img src="assets/img/hero-home.jpg?v=3" data-slot="home-01" alt="Casa moderna con impianto fotovoltaico sul tetto"><span class="ph-label">Il comfort di casa, in ogni stagione</span></div>
     </div>
   </div>
 </section>
@@ -256,10 +256,10 @@
       <a href="galleria.html" class="btn btn-outline">Vedi tutta la galleria</a>
     </div>
     <div class="grid grid-4" style="margin-top:40px;">
-      <div class="ph ph-cover reveal" style="aspect-ratio:1/1;"><img src="assets/img/gallery-1.jpg" alt="Installazione pompa di calore"></div>
-      <div class="ph ph-cover reveal" style="aspect-ratio:1/1;"><img src="assets/img/gallery-2.jpg" alt="Climatizzatore installato"></div>
-      <div class="ph ph-cover reveal" style="aspect-ratio:1/1;"><img src="assets/img/fotovoltaico-1.jpg" alt="Impianto fotovoltaico su tetto"></div>
-      <div class="ph ph-cover reveal" style="aspect-ratio:1/1;"><img src="assets/img/gallery-5.jpg" alt="Impianto idraulico realizzato"></div>
+      <div class="ph ph-cover reveal" style="aspect-ratio:1/1;"><img src="assets/img/gallery-1.jpg" data-slot="home-02" alt="Installazione pompa di calore"></div>
+      <div class="ph ph-cover reveal" style="aspect-ratio:1/1;"><img src="assets/img/gallery-2.jpg" data-slot="home-03" alt="Climatizzatore installato"></div>
+      <div class="ph ph-cover reveal" style="aspect-ratio:1/1;"><img src="assets/img/fotovoltaico-1.jpg" data-slot="home-04" alt="Impianto fotovoltaico su tetto"></div>
+      <div class="ph ph-cover reveal" style="aspect-ratio:1/1;"><img src="assets/img/gallery-5.jpg" data-slot="home-05" alt="Impianto idraulico realizzato"></div>
     </div>
   </div>
 </section>
@@ -309,6 +309,12 @@
   </div>
 </footer>
 
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
+<script src="assets/js/firebase-config.js?v=3"></script>
+<script src="assets/js/site-images.js?v=1"></script>
 <script src="assets/js/main.js?v=3"></script>
 </body>
 </html>
