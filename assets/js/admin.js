@@ -13,11 +13,16 @@ function showLogin(){
   document.getElementById('dashboard-view').style.display = 'none';
 }
 
+const SUPER_ADMIN_EMAIL = 'giorgio.ge@hotmail.it';
+
 function showDashboard(user){
   document.getElementById('login-view').style.display = 'none';
   document.getElementById('dashboard-view').style.display = '';
   document.getElementById('admin-email').textContent = user.email;
   loadProductsList();
+
+  const isSuperAdmin = (user.email || '').toLowerCase() === SUPER_ADMIN_EMAIL;
+  document.getElementById('tab-users-btn').style.display = isSuperAdmin ? '' : 'none';
 }
 
 function initAuth(){
@@ -201,9 +206,6 @@ const IMAGE_SLOTS = {
   }))
 };
 
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
-const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-
 function initAdminTabs(){
   const buttons = document.querySelectorAll('.tabbar button');
   const panels = document.querySelectorAll('.admin-panel');
@@ -242,73 +244,46 @@ async function loadImageSlots(){
       ? `<small class="badge-custom">Personalizzata</small>`
       : `<small class="badge-default">Immagine di default</small>`;
     return `
-      <div class="admin-row" data-slot="${slot.key}">
+      <div class="admin-row" data-slot="${slot.key}" style="align-items:flex-start; flex-wrap:wrap;">
         ${thumb}
-        <div class="admin-row-info">
+        <div class="admin-row-info" style="flex-basis:200px;">
           <b>${slot.label}</b>
           <span>${slot.key}</span><br>
           ${badge}
         </div>
-        <div class="admin-row-actions">
-          <label class="upload-label">
-            <i class="fa-solid fa-upload"></i> Carica foto
-            <input type="file" accept="image/jpeg,image/png,image/webp" style="display:none;" onchange="uploadSlotImage('${page}','${slot.key}', this)">
-          </label>
+        <div class="admin-row-actions" style="flex:1; min-width:260px; align-items:center;">
+          <input type="url" placeholder="https://..." value="${(ov && ov.url) ? ov.url : ''}" style="flex:1; min-width:180px; padding:10px 14px; border-radius:var(--radius-sm); border:1.5px solid var(--ink-100); font-size:13.5px;">
+          <button class="btn btn-primary btn-sm" onclick="saveSlotImageUrl('${page}','${slot.key}', this)">Salva</button>
           ${(ov && ov.url) ? `<button class="btn btn-sm" style="background:#e0413c;color:#fff;" onclick="resetSlotImage('${slot.key}')">Ripristina originale</button>` : ''}
         </div>
       </div>`;
   }).join('');
 }
 
-async function uploadSlotImage(page, slotKey, input){
-  const file = input.files[0];
-  if (!file) return;
-
-  if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
-    alert('Formato non supportato. Usa JPG, PNG o WEBP.');
-    input.value = '';
-    return;
-  }
-  if (file.size > MAX_IMAGE_SIZE) {
-    alert('Il file supera 5 MB. Scegli un\'immagine più leggera.');
-    input.value = '';
-    return;
-  }
-
+async function saveSlotImageUrl(page, slotKey, btn){
   const row = document.querySelector(`.admin-row[data-slot="${slotKey}"]`);
-  const actionsEl = row.querySelector('.admin-row-actions');
-  const originalHTML = actionsEl.innerHTML;
-  actionsEl.innerHTML = '<span style="font-size:13px;color:var(--ink-300);">Caricamento in corso...</span>';
+  const input = row.querySelector('input[type=url]');
+  const url = input.value.trim();
+  if (!url) { alert('Incolla prima un link a un\'immagine.'); return; }
 
+  btn.disabled = true;
+  btn.textContent = 'Salvo...';
   try {
-    const ext = file.name.split('.').pop().toLowerCase();
-    const storagePath = `site-images/${page}/${slotKey}.${ext}`;
-    const ref = storage.ref().child(storagePath);
-    await ref.put(file);
-    const url = await ref.getDownloadURL();
-
     await db.collection('site_images').doc(slotKey).set({
-      page, slotKey, url, storagePath,
+      page, slotKey, url,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     });
-
     loadImageSlots();
   } catch (err) {
-    alert('Caricamento non riuscito: ' + err.message);
-    actionsEl.innerHTML = originalHTML;
+    alert('Salvataggio non riuscito: ' + err.message);
+    btn.disabled = false;
+    btn.textContent = 'Salva';
   }
 }
 
 async function resetSlotImage(slotKey){
   if (!confirm('Ripristinare l\'immagine originale per questo spazio?')) return;
-  const doc = await db.collection('site_images').doc(slotKey).get();
-  if (doc.exists) {
-    const data = doc.data();
-    if (data.storagePath) {
-      try { await storage.ref().child(data.storagePath).delete(); } catch (e) {}
-    }
-    await db.collection('site_images').doc(slotKey).delete();
-  }
+  await db.collection('site_images').doc(slotKey).delete();
   loadImageSlots();
 }
 
@@ -316,9 +291,66 @@ function initImagesPanel(){
   document.getElementById('image-page-select').addEventListener('change', loadImageSlots);
 }
 
+/* ===========================================================
+   Gestione utenti (solo super-admin)
+   =========================================================== */
+
+function generateTempPassword(){
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+  let pwd = '';
+  for (let i = 0; i < 10; i++) pwd += chars[Math.floor(Math.random() * chars.length)];
+  return pwd;
+}
+
+function initUserManagement(){
+  document.getElementById('gen-password-btn').addEventListener('click', () => {
+    document.getElementById('new-user-password').value = generateTempPassword();
+  });
+
+  document.getElementById('create-user-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('new-user-email').value.trim();
+    const password = document.getElementById('new-user-password').value;
+    const msgBox = document.getElementById('user-create-message');
+    const submitBtn = e.target.querySelector('button[type=submit]');
+
+    msgBox.style.display = 'none';
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Creazione in corso...';
+
+    // Si usa un'app Firebase secondaria temporanea per non sostituire
+    // la sessione dell'amministratore con quella del nuovo utente.
+    const secondaryApp = firebase.initializeApp(firebaseConfig, 'Secondary-' + Date.now());
+    try {
+      await secondaryApp.auth().createUserWithEmailAndPassword(email, password);
+      await secondaryApp.auth().signOut();
+
+      msgBox.style.background = 'rgba(31,157,99,.1)';
+      msgBox.style.color = 'var(--success)';
+      msgBox.textContent = `Utente creato: ${email}. Comunicagli email e password per il primo accesso.`;
+      msgBox.style.display = '';
+      document.getElementById('create-user-form').reset();
+    } catch (err) {
+      let text = 'Creazione non riuscita.';
+      if (err.code === 'auth/email-already-in-use') text = 'Esiste già un utente con questa email.';
+      if (err.code === 'auth/weak-password') text = 'Password troppo debole: usa almeno 6 caratteri.';
+      if (err.code === 'auth/invalid-email') text = 'Email non valida.';
+      msgBox.style.background = 'rgba(224,65,60,.1)';
+      msgBox.style.color = '#e0413c';
+      msgBox.textContent = text;
+      msgBox.style.display = '';
+    } finally {
+      await secondaryApp.delete();
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Crea utente';
+    }
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initAuth();
   initProductForm();
   initAdminTabs();
   initImagesPanel();
+  initUserManagement();
 });

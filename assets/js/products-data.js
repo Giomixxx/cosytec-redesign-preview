@@ -19,6 +19,7 @@
 const CATEGORY_LABELS = {
   daikin: "Climatizzatori",
   caldaie: "Caldaie",
+  termoidraulica: "Termoidraulica",
   stufe: "Stufe & Camini",
   foto: "Fotovoltaico & Solare"
 };
@@ -115,7 +116,7 @@ function productCardHTML(p, { withCart = false } = {}){
 
 async function renderProdottiPage(){
   const products = await fetchActiveProducts();
-  ['daikin', 'caldaie', 'stufe', 'foto'].forEach(cat => {
+  ['daikin', 'caldaie', 'termoidraulica', 'stufe', 'foto'].forEach(cat => {
     const container = document.getElementById('grid-' + cat);
     if (!container) return;
     const items = products.filter(p => p.category === cat);

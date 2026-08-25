@@ -81,6 +81,7 @@
     <div class="tabbar reveal">
       <button class="active" data-tab="tab-daikin">Climatizzatori</button>
       <button data-tab="tab-caldaie">Caldaie</button>
+      <button data-tab="tab-termoidraulica">Termoidraulica</button>
       <button data-tab="tab-stufe">Stufe &amp; Camini</button>
       <button data-tab="tab-fotovoltaico">Fotovoltaico</button>
     </div>
@@ -101,6 +102,15 @@
         <p>Massima efficienza energetica e comfort costante per il riscaldamento e l'acqua calda sanitaria.</p>
       </div>
       <div class="grid grid-3" id="grid-caldaie"></div>
+    </div>
+
+    <!-- TERMOIDRAULICA -->
+    <div class="tab-panel" id="tab-termoidraulica">
+      <div class="section-head" id="termoidraulica">
+        <h2>Termoidraulica</h2>
+        <p>Impianti idrici, sanitari e componenti per il riscaldamento tradizionale, installati a regola d'arte.</p>
+      </div>
+      <div class="grid grid-3" id="grid-termoidraulica"></div>
     </div>
 
     <!-- STUFE -->
@@ -188,7 +198,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=3"></script>
-<script src="assets/js/products-data.js?v=2"></script>
+<script src="assets/js/products-data.js?v=3"></script>
 <script src="assets/js/main.js?v=3"></script>
 <script>renderProdottiPage();</script>
 </body>
