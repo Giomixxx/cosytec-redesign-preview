@@ -12,6 +12,7 @@
    imageUrl         string    URL diretto immagine
    imageStyle       string    photo | white | cover
    accent           string    warm | cool | duo | navy (solo per imageStyle=photo)
+   pdfUrl           string    URL diretto a una scheda tecnica PDF (opzionale)
    active           boolean   Se false non viene mostrato
    createdAt        timestamp
    =========================================================== */
@@ -53,7 +54,7 @@ async function importSeedProducts(){
     batch.set(ref, {
       name: p.name, tag: p.tag, category: p.category, price: p.price,
       priceNote: p.priceNote, description: p.description, imageUrl: p.imageUrl,
-      imageStyle: p.imageStyle, accent: p.accent || '', active: true,
+      imageStyle: p.imageStyle, accent: p.accent || '', pdfUrl: p.pdfUrl || '', active: true,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
   });
@@ -87,6 +88,9 @@ function productCardHTML(p, { withCart = false } = {}){
   const priceNote = p.priceNote ? `<small>${p.priceNote}</small>` : '';
   const phClass = phClassFor(p);
   const imgTag = `<img src="${p.imageUrl}" alt="${p.name}">`;
+  const pdfLink = p.pdfUrl
+    ? `<a href="${p.pdfUrl}" target="_blank" rel="noopener" class="pdf-link"><i class="fa-solid fa-file-pdf"></i> Scheda tecnica (PDF)</a>`
+    : '';
 
   if (withCart) {
     return `
@@ -96,6 +100,7 @@ function productCardHTML(p, { withCart = false } = {}){
           <span class="tag">${p.tag}</span>
           <h3>${p.name}</h3>
           <p>${p.description}</p>
+          ${pdfLink}
           <div class="price-row"><span class="price">€${p.price.toLocaleString('it-IT')}</span></div>
           <button class="add-cart-btn"><i class="fa-solid fa-cart-plus"></i> Aggiungi al carrello</button>
         </div>
@@ -109,6 +114,7 @@ function productCardHTML(p, { withCart = false } = {}){
         <span class="tag">${p.tag}</span>
         <h3>${p.name}</h3>
         <p>${p.description}</p>
+        ${pdfLink}
         <div class="price-row"><span class="price">€${p.price.toLocaleString('it-IT')} ${priceNote}</span><a href="preventivo.html" class="btn btn-outline btn-sm">Richiedi</a></div>
       </div>
     </div>`;

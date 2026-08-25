@@ -131,6 +131,7 @@ async function editProduct(id){
   document.getElementById('f-priceNote').value = p.priceNote || '';
   document.getElementById('f-description').value = p.description || '';
   document.getElementById('f-imageUrl').value = p.imageUrl || '';
+  document.getElementById('f-pdfUrl').value = p.pdfUrl || '';
   document.getElementById('f-imageStyle').value = p.imageStyle || 'white';
   document.getElementById('f-accent').value = p.accent || 'cool';
   document.getElementById('form-title').textContent = 'Modifica prodotto';
@@ -161,6 +162,7 @@ function initProductForm(){
       priceNote: document.getElementById('f-priceNote').value.trim(),
       description: document.getElementById('f-description').value.trim(),
       imageUrl: document.getElementById('f-imageUrl').value.trim(),
+      pdfUrl: document.getElementById('f-pdfUrl').value.trim(),
       imageStyle: document.getElementById('f-imageStyle').value,
       accent: document.getElementById('f-accent').value,
       active: true
