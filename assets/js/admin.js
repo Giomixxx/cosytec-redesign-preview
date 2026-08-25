@@ -24,7 +24,7 @@ function initAuth(){
   if (!auth) {
     const errorBox = document.getElementById('login-error');
     errorBox.textContent = 'Firebase non è ancora configurato: inserisci le credenziali in assets/js/firebase-config.js.';
-    errorBox.style.display = '';
+    errorBox.style.display = 'block';
     document.getElementById('login-form').querySelector('button').disabled = true;
     return;
   }
@@ -43,7 +43,7 @@ function initAuth(){
       await auth.signInWithEmailAndPassword(email, password);
     } catch (err) {
       errorBox.textContent = 'Accesso non riuscito: controlla email e password.';
-      errorBox.style.display = '';
+      errorBox.style.display = 'block';
     }
   });
 
