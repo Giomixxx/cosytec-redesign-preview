@@ -5,6 +5,10 @@
      name        string
      order       number
 
+   Collezione "brands"                (marchio, es. "Daikin", associato a una categoria)
+     name          string
+     categoryId    string   id della categoria a cui appartiene questo marchio
+
    Collezione "series"                (modello/serie, es. "Daikin Sensira")
      categoryId    string   id della categoria
      tag           string   marchio/etichetta card (es. "Daikin")
@@ -36,6 +40,19 @@ const SEED_CATEGORIES = [
   { id: 'termoidraulica', name: 'Termoidraulica', order: 3 },
   { id: 'stufe', name: 'Stufe & Camini', order: 4 },
   { id: 'foto', name: 'Fotovoltaico & Solare', order: 5 }
+];
+
+const SEED_BRANDS = [
+  { id: 'daikin', name: 'Daikin', categoryId: 'daikin' },
+  { id: 'gree', name: 'Gree', categoryId: 'daikin' },
+  { id: 'fondital', name: 'Fondital', categoryId: 'caldaie' },
+  { id: 'stelbi', name: 'Stelbi', categoryId: 'caldaie' },
+  { id: 'ariston', name: 'Ariston', categoryId: 'caldaie' },
+  { id: 'immergas', name: 'Immergas', categoryId: 'caldaie' },
+  { id: 'rinnai', name: 'Rinnai', categoryId: 'caldaie' },
+  { id: 'palazzetti', name: 'Palazzetti', categoryId: 'stufe' },
+  { id: 'tft', name: 'TFT', categoryId: 'stufe' },
+  { id: 'unical', name: 'Unical', categoryId: 'foto' }
 ];
 
 const SEED_SERIES = [
@@ -209,6 +226,9 @@ async function importSeedCatalog(){
   const catBatch = db.batch();
   SEED_CATEGORIES.forEach(c => {
     catBatch.set(db.collection('categories').doc(c.id), { name: c.name, order: c.order });
+  });
+  SEED_BRANDS.forEach(b => {
+    catBatch.set(db.collection('brands').doc(b.id), { name: b.name, categoryId: b.categoryId });
   });
   await catBatch.commit();
 

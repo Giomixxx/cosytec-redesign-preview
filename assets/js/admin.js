@@ -17,7 +17,7 @@ function showDashboard(user){
   document.getElementById('login-view').style.display = 'none';
   document.getElementById('dashboard-view').style.display = '';
   document.getElementById('admin-email').textContent = user.email;
-  loadCategoriesAdmin().then(() => {
+  loadCategoriesAdmin().then(loadBrandsAdmin).then(() => {
     resetSeriesForm();
     loadSeriesListAdmin();
   });
@@ -94,6 +94,7 @@ let editingCategoryId = null;
 async function loadCategoriesAdmin(){
   const listEl = document.getElementById('categories-list');
   const catSelect = document.getElementById('s-category');
+  const brandCatSelect = document.getElementById('brand-category');
   const snap = await db.collection('categories').get();
   let cats = [];
   snap.forEach(doc => cats.push({ id: doc.id, ...doc.data() }));
@@ -112,7 +113,9 @@ async function loadCategoriesAdmin(){
       </div>
     </div>`).join('') : '<p style="color:var(--ink-300);">Nessuna categoria ancora. Aggiungine una dal form qui sotto.</p>';
 
-  catSelect.innerHTML = cats.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+  const optionsHTML = cats.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+  catSelect.innerHTML = optionsHTML;
+  brandCatSelect.innerHTML = optionsHTML;
 }
 
 function editCategory(id){
@@ -126,9 +129,12 @@ function editCategory(id){
 }
 
 async function deleteCategory(id){
-  const inUse = await db.collection('series').where('categoryId', '==', id).limit(1).get();
-  if (!inUse.empty) {
-    alert('Impossibile eliminare: ci sono ancora modelli in questa categoria. Sposta o elimina prima quei modelli.');
+  const [seriesInUse, brandsInUse] = await Promise.all([
+    db.collection('series').where('categoryId', '==', id).limit(1).get(),
+    db.collection('brands').where('categoryId', '==', id).limit(1).get()
+  ]);
+  if (!seriesInUse.empty || !brandsInUse.empty) {
+    alert('Impossibile eliminare: ci sono ancora modelli o marchi in questa categoria. Sposta o elimina prima quegli elementi.');
     return;
   }
   if (!confirm('Eliminare definitivamente questa categoria?')) return;
@@ -154,6 +160,86 @@ function initCategoryForm(){
     document.getElementById('category-form-submit-btn').textContent = 'Aggiungi categoria';
     loadCategoriesAdmin();
   });
+}
+
+/* ===========================================================
+   Gestione catalogo: Marchi
+   =========================================================== */
+
+let cachedBrands = [];
+let editingBrandId = null;
+
+async function loadBrandsAdmin(){
+  const listEl = document.getElementById('brands-list');
+  const snap = await db.collection('brands').get();
+  let brands = [];
+  snap.forEach(doc => brands.push({ id: doc.id, ...doc.data() }));
+  brands.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+  cachedBrands = brands;
+
+  listEl.innerHTML = brands.length ? brands.map(b => {
+    const catName = (cachedCategories.find(c => c.id === b.categoryId) || {}).name || '—';
+    return `
+    <div class="admin-row" data-brand-id="${b.id}">
+      <div class="admin-row-info">
+        <b>${b.name}</b>
+        <span>${catName}</span>
+      </div>
+      <div class="admin-row-actions">
+        <button type="button" class="btn btn-outline btn-sm" onclick="editBrand('${b.id}')">Modifica</button>
+        <button type="button" class="btn btn-sm" style="background:#e0413c;color:#fff;" onclick="deleteBrand('${b.id}')">Elimina</button>
+      </div>
+    </div>`;
+  }).join('') : '<p style="color:var(--ink-300);">Nessun marchio ancora. Aggiungine uno dal form qui sotto.</p>';
+}
+
+function editBrand(id){
+  const b = cachedBrands.find(x => x.id === id);
+  if (!b) return;
+  editingBrandId = id;
+  document.getElementById('brand-name').value = b.name || '';
+  document.getElementById('brand-category').value = b.categoryId || '';
+  document.getElementById('brand-form-submit-btn').textContent = 'Salva modifiche';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function deleteBrand(id){
+  if (!confirm('Eliminare definitivamente questo marchio?')) return;
+  await db.collection('brands').doc(id).delete();
+  if (editingBrandId === id) editingBrandId = null;
+  await loadBrandsAdmin();
+  populateTagSelect(document.getElementById('s-category').value, document.getElementById('s-tag').value);
+}
+
+function initBrandForm(){
+  document.getElementById('brand-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = {
+      name: document.getElementById('brand-name').value.trim(),
+      categoryId: document.getElementById('brand-category').value
+    };
+    if (editingBrandId) {
+      await db.collection('brands').doc(editingBrandId).update(data);
+      editingBrandId = null;
+    } else {
+      await db.collection('brands').add(data);
+    }
+    document.getElementById('brand-form').reset();
+    document.getElementById('brand-form-submit-btn').textContent = 'Aggiungi marchio';
+    await loadBrandsAdmin();
+    populateTagSelect(document.getElementById('s-category').value, document.getElementById('s-tag').value);
+  });
+}
+
+function populateTagSelect(categoryId, selectedValue){
+  const tagSelect = document.getElementById('s-tag');
+  const brands = cachedBrands.filter(b => b.categoryId === categoryId).sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+  let options = brands.map(b => `<option value="${b.name}">${b.name}</option>`);
+  if (selectedValue && !brands.some(b => b.name === selectedValue)) {
+    options.push(`<option value="${selectedValue}">${selectedValue} (non in elenco marchi)</option>`);
+  }
+  tagSelect.innerHTML = options.length ? options.join('') : '<option value="">Nessun marchio per questa categoria</option>';
+  if (selectedValue) tagSelect.value = selectedValue;
 }
 
 /* ===========================================================
@@ -197,6 +283,7 @@ function resetSeriesForm(){
   document.getElementById('s-images-rows').innerHTML = '';
   document.getElementById('s-docs-rows').innerHTML = '';
   addImageRow();
+  populateTagSelect(document.getElementById('s-category').value, '');
   document.getElementById('series-form-title').textContent = 'Aggiungi nuovo modello';
   document.getElementById('series-submit-btn').textContent = 'Aggiungi modello';
   document.getElementById('series-cancel-btn').style.display = 'none';
@@ -266,8 +353,8 @@ async function editSeries(id){
   const s = doc.data();
   editingSeriesId = id;
   document.getElementById('s-name').value = s.name || '';
-  document.getElementById('s-tag').value = s.tag || '';
   document.getElementById('s-category').value = s.categoryId || '';
+  populateTagSelect(s.categoryId || document.getElementById('s-category').value, s.tag || '');
   document.getElementById('s-order').value = s.order != null ? s.order : '';
   document.getElementById('s-description').value = s.description || '';
   document.getElementById('s-features').value = (s.features || []).join('\n');
@@ -304,6 +391,9 @@ async function deleteSeries(id){
 }
 
 function initSeriesForm(){
+  document.getElementById('s-category').addEventListener('change', () => {
+    populateTagSelect(document.getElementById('s-category').value, '');
+  });
   document.getElementById('add-image-row-btn').addEventListener('click', () => addImageRow());
   document.getElementById('add-doc-row-btn').addEventListener('click', () => addDocRow());
 
@@ -722,6 +812,7 @@ function initUserManagement(){
 document.addEventListener('DOMContentLoaded', () => {
   initAuth();
   initCategoryForm();
+  initBrandForm();
   initSeriesForm();
   initPreviewModal();
   initAdminTabs();

@@ -130,19 +130,26 @@
       </form>
     </div>
 
+    <div class="card-panel" style="margin-bottom:24px;">
+      <h3 style="margin-bottom:6px;">Marchi</h3>
+      <p style="margin-bottom:20px;">I marchi sono associati a una categoria (es. Daikin → Climatizzatori, Ariston → Caldaie): scegliendo la categoria nel form del modello qui sotto, l'etichetta mostrerà solo i marchi di quella categoria.</p>
+      <div id="brands-list" style="margin-bottom:20px;"></div>
+      <form id="brand-form" class="field-row" style="align-items:end; margin:0;">
+        <div class="field" style="margin:0;">
+          <label>Nome marchio</label>
+          <input type="text" id="brand-name" placeholder="Es. Daikin" required>
+        </div>
+        <div class="field" style="margin:0;">
+          <label>Categoria associata</label>
+          <select id="brand-category" required></select>
+        </div>
+        <button type="submit" id="brand-form-submit-btn" class="btn btn-primary" style="height:fit-content;">Aggiungi marchio</button>
+      </form>
+    </div>
+
     <div class="card-panel" style="margin-bottom:30px;">
       <h3 id="series-form-title" style="margin-bottom:20px;">Aggiungi nuovo modello</h3>
       <form id="series-form">
-        <div class="field-row">
-          <div class="field">
-            <label>Nome modello</label>
-            <input type="text" id="s-name" placeholder="Es. Daikin Sensira" required>
-          </div>
-          <div class="field">
-            <label>Etichetta card (marchio)</label>
-            <input type="text" id="s-tag" placeholder="Es. Daikin" required>
-          </div>
-        </div>
         <div class="field-row">
           <div class="field">
             <label>Categoria</label>
@@ -151,6 +158,16 @@
           <div class="field">
             <label>Ordine nella categoria</label>
             <input type="number" id="s-order" placeholder="Es. 1" required>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Nome modello</label>
+            <input type="text" id="s-name" placeholder="Es. Daikin Sensira" required>
+          </div>
+          <div class="field">
+            <label>Etichetta card (marchio)</label>
+            <select id="s-tag" required></select>
           </div>
         </div>
         <div class="field">
@@ -272,8 +289,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=3"></script>
-<script src="assets/js/catalog-data.js?v=1"></script>
+<script src="assets/js/catalog-data.js?v=2"></script>
 <script src="assets/js/product-detail.js?v=1"></script>
-<script src="assets/js/admin.js?v=10"></script>
+<script src="assets/js/admin.js?v=11"></script>
 </body>
 </html>
