@@ -3,12 +3,37 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shop — Cosytec</title>
+<title>Prodotto — Cosytec</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="icon" href="assets/img/favicon-32.png">
 <link rel="stylesheet" href="assets/css/style.css?v=7">
+<style>
+  .detail-wrap{ display:grid; grid-template-columns:1fr 1fr; gap:50px; align-items:start; }
+  @media (max-width:900px){ .detail-wrap{ grid-template-columns:1fr; } }
+  .detail-gallery-main{ aspect-ratio:4/3; margin-bottom:14px; }
+  .detail-thumbs{ display:flex; gap:10px; flex-wrap:wrap; }
+  .detail-thumbs .ph{ width:72px; height:72px; cursor:pointer; opacity:.6; border:2px solid transparent; }
+  .detail-thumbs .ph.active{ opacity:1; border-color:var(--flame-500); }
+  .detail-thumbs .ph i{ font-size:20px; }
+  .detail-features{ margin:20px 0; }
+  .detail-features li{ display:flex; gap:10px; align-items:flex-start; margin-bottom:10px; font-size:14.5px; color:var(--ink-500); }
+  .detail-features li i{ color:var(--success); margin-top:3px; flex-shrink:0; }
+  .variant-box{ background:var(--paper-100); border-radius:var(--radius-md); padding:22px; margin:24px 0; }
+  .variant-box .row{ display:flex; justify-content:space-between; align-items:center; margin-top:14px; font-size:14.5px; }
+  .variant-box .row b{ color:var(--ink-900); }
+  .variant-box .price-big{ font-family:'Poppins',sans-serif; font-weight:700; font-size:24px; color:var(--ink-900); }
+  .detail-actions{ display:flex; gap:12px; flex-wrap:wrap; margin-top:20px; }
+  .btn-whatsapp{ background:#25D366; color:#fff; }
+  .btn-whatsapp:hover{ background:#1ebe5a; }
+  .detail-pdf-link{ display:inline-flex; align-items:center; gap:8px; margin-top:18px; font-weight:700; font-size:14px; color:var(--flame-600); }
+  .doc-list{ display:flex; flex-direction:column; gap:10px; margin-top:16px; }
+  .doc-list a{ display:flex; align-items:center; gap:10px; padding:14px 16px; background:#fff; border:1px solid rgba(18,24,31,.08); border-radius:var(--radius-sm); font-size:14px; font-weight:600; color:var(--ink-800); }
+  .doc-list a:hover{ border-color:var(--flame-500); color:var(--flame-600); }
+  .doc-list a i{ color:var(--flame-600); font-size:16px; }
+  #added-feedback{ display:none; margin-top:12px; font-size:13.5px; color:var(--success); font-weight:600; }
+</style>
 </head>
 <body>
 
@@ -34,7 +59,7 @@
       <a href="chi-siamo.html">Chi Siamo</a>
       <a href="prodotti.html">Prodotti</a>
       <a href="galleria.html">Galleria</a>
-      <a href="shop.html" class="active">Shop</a>
+      <a href="shop.html">Shop</a>
     </nav>
     <div class="nav-cta">
       <a href="cassa.html" class="cart-btn"><i class="fa-solid fa-cart-shopping"></i><span class="cart-count">0</span></a>
@@ -60,40 +85,26 @@
 
 <section class="page-hero">
   <div class="container">
-    <div class="breadcrumb"><a href="index.html">Home</a> / Shop</div>
-    <h1>Shop Cosytec</h1>
-    <p>Sfoglia i prodotti più richiesti e invia la tua richiesta di preventivo: ti ricontattiamo noi per confermare prezzo, disponibilità e installazione.</p>
+    <div class="breadcrumb" id="detail-breadcrumb"><a href="index.html">Home</a> / <a href="prodotti.html">Prodotti</a></div>
+    <h1 id="detail-title">Caricamento...</h1>
   </div>
 </section>
 
 <section>
+  <div class="container" id="detail-root">
+    <p style="color:var(--ink-300);">Caricamento prodotto...</p>
+  </div>
+</section>
+
+<section style="padding-top:0;">
   <div class="container">
-    <div class="shop-layout">
-
-      <aside class="filter-box reveal">
-        <h4><i class="fa-solid fa-sliders"></i> Filtra prodotti</h4>
-        <div class="fgroup">
-          <label style="font-weight:700; color:var(--ink-800); margin-bottom:12px;">Categoria</label>
-          <div id="shop-filter-categories"></div>
-        </div>
-        <div class="fgroup">
-          <label style="font-weight:700; color:var(--ink-800); margin-bottom:12px;">Prezzo massimo</label>
-          <input type="range" min="500" max="8000" value="8000">
-        </div>
-        <a href="preventivo.html" class="btn btn-outline btn-block btn-sm">Serve installazione?</a>
-      </aside>
-
+    <div class="cta-band reveal">
       <div>
-        <div class="shop-toolbar reveal">
-          <span style="font-size:14px; color:var(--ink-500);">13 prodotti disponibili</span>
-          <select>
-            <option>Più rilevanti</option>
-            <option>Prezzo crescente</option>
-            <option>Prezzo decrescente</option>
-          </select>
-        </div>
-
-        <div class="grid grid-3" id="shop-grid"></div>
+        <h2>Non sai quale prodotto fa per te?</h2>
+        <p>Raccontaci le tue esigenze: ti proponiamo la soluzione migliore con un preventivo gratuito e senza impegno.</p>
+      </div>
+      <div class="actions">
+        <a href="preventivo.html" class="btn btn-dark">Richiedi un preventivo</a>
       </div>
     </div>
   </div>
@@ -151,6 +162,6 @@
 <script src="assets/js/firebase-config.js?v=3"></script>
 <script src="assets/js/catalog-data.js?v=1"></script>
 <script src="assets/js/main.js?v=3"></script>
-<script>renderShopPage();</script>
+<script src="assets/js/product-detail.js?v=1"></script>
 </body>
 </html>

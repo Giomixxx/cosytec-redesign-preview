@@ -76,62 +76,71 @@
     </div>
 
     <div class="tabbar" style="margin-bottom:30px;">
-      <button class="active" data-panel="panel-products">Prodotti</button>
+      <button class="active" data-panel="panel-products">Catalogo</button>
       <button data-panel="panel-images">Immagini sito</button>
       <button data-panel="panel-users" id="tab-users-btn" style="display:none;">Utenti</button>
     </div>
 
     <div id="panel-products" class="admin-panel">
 
+    <div class="card-panel" style="margin-bottom:24px;">
+      <h3 style="margin-bottom:16px;">Macrocategorie</h3>
+      <div id="categories-list" style="margin-bottom:20px;"></div>
+      <form id="category-form" class="field-row" style="align-items:end; margin:0;">
+        <div class="field" style="margin:0;">
+          <label>Nome categoria</label>
+          <input type="text" id="cat-name" placeholder="Es. Solare Termico" required>
+        </div>
+        <div class="field" style="margin:0;">
+          <label>Ordine</label>
+          <input type="number" id="cat-order" placeholder="Es. 6" required>
+        </div>
+        <button type="submit" id="category-form-submit-btn" class="btn btn-primary" style="height:fit-content;">Aggiungi categoria</button>
+      </form>
+    </div>
+
     <div class="card-panel" style="margin-bottom:30px;">
-      <h3 id="form-title" style="margin-bottom:20px;">Aggiungi nuovo prodotto</h3>
-      <form id="product-form">
+      <h3 id="series-form-title" style="margin-bottom:20px;">Aggiungi nuovo modello</h3>
+      <form id="series-form">
         <div class="field-row">
           <div class="field">
-            <label>Nome prodotto</label>
-            <input type="text" id="f-name" placeholder="Es. Daikin Stylish 9000 BTU" required>
+            <label>Nome modello</label>
+            <input type="text" id="s-name" placeholder="Es. Daikin Sensira" required>
           </div>
           <div class="field">
-            <label>Etichetta card</label>
-            <input type="text" id="f-tag" placeholder="Es. Daikin, Promo, Premium" required>
+            <label>Etichetta card (marchio)</label>
+            <input type="text" id="s-tag" placeholder="Es. Daikin" required>
           </div>
         </div>
-        <div class="field-row-3">
+        <div class="field-row">
           <div class="field">
             <label>Categoria</label>
-            <select id="f-category" required>
-              <option value="daikin">Climatizzatori</option>
-              <option value="caldaie">Caldaie</option>
-              <option value="termoidraulica">Termoidraulica</option>
-              <option value="stufe">Stufe &amp; Camini</option>
-              <option value="foto">Fotovoltaico &amp; Solare</option>
-            </select>
+            <select id="s-category" required></select>
           </div>
           <div class="field">
-            <label>Prezzo (€)</label>
-            <input type="number" id="f-price" placeholder="Es. 549" required>
-          </div>
-          <div class="field">
-            <label>Nota prezzo</label>
-            <input type="text" id="f-priceNote" placeholder="Es. installazione esclusa">
+            <label>Ordine nella categoria</label>
+            <input type="number" id="s-order" placeholder="Es. 1" required>
           </div>
         </div>
         <div class="field">
           <label>Descrizione breve</label>
-          <textarea id="f-description" rows="2" placeholder="Una frase che descrive il prodotto" required></textarea>
+          <textarea id="s-description" rows="2" placeholder="Una frase che descrive il modello" required></textarea>
         </div>
         <div class="field">
-          <label>URL immagine</label>
-          <input type="url" id="f-imageUrl" placeholder="https://..." required>
+          <label>Caratteristiche principali (una per riga)</label>
+          <textarea id="s-features" rows="4" placeholder="Es. Classe energetica A++&#10;Gas refrigerante ecologico R32"></textarea>
         </div>
+
         <div class="field">
-          <label>URL scheda tecnica PDF (facoltativo)</label>
-          <input type="url" id="f-pdfUrl" placeholder="https://... (lascia vuoto se non disponibile)">
+          <label>Immagini prodotto (URL, la prima è la copertina)</label>
+          <div id="s-images-rows"></div>
+          <button type="button" id="add-image-row-btn" class="btn btn-outline btn-sm" style="margin-top:8px;">+ Aggiungi immagine</button>
         </div>
+
         <div class="field-row">
           <div class="field">
             <label>Stile immagine</label>
-            <select id="f-imageStyle">
+            <select id="s-imageStyle">
               <option value="white">Foto su sfondo bianco (es. foto catalogo)</option>
               <option value="photo">Foto ritagliata su sfondo colorato</option>
               <option value="cover">Foto ambientata a piena card</option>
@@ -139,7 +148,7 @@
           </div>
           <div class="field">
             <label>Colore sfondo (solo per "ritagliata")</label>
-            <select id="f-accent">
+            <select id="s-accent">
               <option value="warm">Arancio</option>
               <option value="cool">Azzurro</option>
               <option value="duo">Sfumato arancio-azzurro</option>
@@ -147,18 +156,30 @@
             </select>
           </div>
         </div>
+
+        <div class="field">
+          <label>URL scheda tecnica ufficiale PDF (facoltativo)</label>
+          <input type="url" id="s-datasheetUrl" placeholder="https://... (lascia vuoto se non disponibile)">
+        </div>
+
+        <div class="field">
+          <label>Documentazione e certificazioni (dichiarazioni, certificazioni, Conto Termico...)</label>
+          <div id="s-docs-rows"></div>
+          <button type="button" id="add-doc-row-btn" class="btn btn-outline btn-sm" style="margin-top:8px;">+ Aggiungi documento</button>
+        </div>
+
         <div class="flex gap-10" style="margin-top:10px;">
-          <button type="submit" id="submit-btn" class="btn btn-primary">Aggiungi prodotto</button>
-          <button type="button" id="cancel-edit-btn" class="btn btn-outline" style="display:none;">Annulla modifica</button>
+          <button type="submit" id="series-submit-btn" class="btn btn-primary">Aggiungi modello</button>
+          <button type="button" id="series-cancel-btn" class="btn btn-outline" style="display:none;">Annulla modifica</button>
         </div>
       </form>
     </div>
 
     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
-      <h3 style="margin:0;">Prodotti pubblicati</h3>
-      <button id="seed-btn" class="btn btn-outline btn-sm">Importa prodotti di esempio</button>
+      <h3 style="margin:0;">Modelli pubblicati</h3>
+      <button id="seed-btn" class="btn btn-outline btn-sm">Importa catalogo di esempio</button>
     </div>
-    <div id="products-list"></div>
+    <div id="series-list"></div>
     </div>
 
     <div id="panel-images" class="admin-panel" style="display:none;">
@@ -208,7 +229,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=3"></script>
-<script src="assets/js/products-data.js?v=4"></script>
-<script src="assets/js/admin.js?v=8"></script>
+<script src="assets/js/catalog-data.js?v=1"></script>
+<script src="assets/js/admin.js?v=9"></script>
 </body>
 </html>

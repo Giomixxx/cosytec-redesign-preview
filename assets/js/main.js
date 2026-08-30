@@ -92,7 +92,7 @@ function initShopButtons(){
 function initShopFilters(){
   const checkboxes = document.querySelectorAll('.filter-box input[type=checkbox][data-cat]');
   if(!checkboxes.length) return;
-  const products = document.querySelectorAll('[data-product]');
+  const products = document.querySelectorAll('#shop-grid [data-cat]');
   function apply(){
     const active = Array.from(checkboxes).filter(c => c.checked).map(c => c.dataset.cat);
     products.forEach(p => {

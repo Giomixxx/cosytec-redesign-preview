@@ -78,57 +78,10 @@
       <a href="preventivo.html" class="btn btn-primary btn-sm" style="margin-left:auto; flex-shrink:0;">Richiedi info</a>
     </div>
 
-    <div class="tabbar reveal">
-      <button class="active" data-tab="tab-daikin">Climatizzatori</button>
-      <button data-tab="tab-caldaie">Caldaie</button>
-      <button data-tab="tab-termoidraulica">Termoidraulica</button>
-      <button data-tab="tab-stufe">Stufe &amp; Camini</button>
-      <button data-tab="tab-fotovoltaico">Fotovoltaico</button>
-    </div>
+    <div class="tabbar reveal" id="category-tabbar"></div>
 
-    <!-- DAIKIN -->
-    <div class="tab-panel active" id="tab-daikin">
-      <div class="section-head" id="daikin">
-        <h2>Climatizzatori</h2>
-        <p>Siamo Daikin Comfort Store: tecnologia leader mondiale nella climatizzazione, per ogni tipo di ambiente e necessità.</p>
-      </div>
-      <div class="grid grid-3" id="grid-daikin"></div>
-    </div>
-
-    <!-- CALDAIE -->
-    <div class="tab-panel" id="tab-caldaie">
-      <div class="section-head" id="caldaie">
-        <h2>Caldaie a condensazione</h2>
-        <p>Massima efficienza energetica e comfort costante per il riscaldamento e l'acqua calda sanitaria.</p>
-      </div>
-      <div class="grid grid-3" id="grid-caldaie"></div>
-    </div>
-
-    <!-- TERMOIDRAULICA -->
-    <div class="tab-panel" id="tab-termoidraulica">
-      <div class="section-head" id="termoidraulica">
-        <h2>Termoidraulica</h2>
-        <p>Impianti idrici, sanitari e componenti per il riscaldamento tradizionale, installati a regola d'arte.</p>
-      </div>
-      <div class="grid grid-3" id="grid-termoidraulica"></div>
-    </div>
-
-    <!-- STUFE -->
-    <div class="tab-panel" id="tab-stufe">
-      <div class="section-head" id="stufe">
-        <h2>Stufe a pellet e camini</h2>
-        <p>Calore naturale ed efficiente, con installazione e canna fumaria a norma incluse nel preventivo.</p>
-      </div>
-      <div class="grid grid-3" id="grid-stufe"></div>
-    </div>
-
-    <!-- FOTOVOLTAICO -->
-    <div class="tab-panel" id="tab-fotovoltaico">
-      <div class="section-head" id="fotovoltaico">
-        <h2>Fotovoltaico e solare termico</h2>
-        <p>Produci la tua energia e riduci i costi in bolletta con impianti chiavi in mano.</p>
-      </div>
-      <div class="grid grid-3" id="grid-foto"></div>
+    <div id="category-panels">
+      <p style="color:var(--ink-300);">Caricamento catalogo...</p>
     </div>
 
   </div>
@@ -172,10 +125,10 @@
       <div>
         <h4>Servizi</h4>
         <ul>
-          <li><a href="prodotti.html#caldaie">Riscaldamento</a></li>
-          <li><a href="prodotti.html#daikin">Climatizzazione</a></li>
-          <li><a href="prodotti.html#fotovoltaico">Fotovoltaico</a></li>
-          <li><a href="prodotti.html#stufe">Stufe &amp; Camini</a></li>
+          <li><a href="prodotti.html">Riscaldamento</a></li>
+          <li><a href="prodotti.html">Climatizzazione</a></li>
+          <li><a href="prodotti.html">Fotovoltaico</a></li>
+          <li><a href="prodotti.html">Stufe &amp; Camini</a></li>
         </ul>
       </div>
       <div>
@@ -198,7 +151,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=3"></script>
-<script src="assets/js/products-data.js?v=4"></script>
+<script src="assets/js/catalog-data.js?v=1"></script>
 <script src="assets/js/main.js?v=3"></script>
 <script>renderProdottiPage();</script>
 </body>
