@@ -114,6 +114,13 @@
 
     <div id="panel-products" class="admin-panel">
 
+    <div class="tabbar" style="margin-bottom:24px;">
+      <button class="active" data-subpanel="subpanel-models">Modelli</button>
+      <button data-subpanel="subpanel-taxonomy">Categorie e Marchi</button>
+    </div>
+
+    <div id="subpanel-taxonomy" class="admin-subpanel" style="display:none;">
+
     <div class="card-panel" style="margin-bottom:24px;">
       <h3 style="margin-bottom:16px;">Macrocategorie</h3>
       <div id="categories-list" style="margin-bottom:20px;"></div>
@@ -146,6 +153,10 @@
         <button type="submit" id="brand-form-submit-btn" class="btn btn-primary" style="height:fit-content;">Aggiungi marchio</button>
       </form>
     </div>
+
+    </div>
+
+    <div id="subpanel-models" class="admin-subpanel">
 
     <div class="card-panel" style="margin-bottom:30px;">
       <h3 id="series-form-title" style="margin-bottom:20px;">Aggiungi nuovo modello</h3>
@@ -229,6 +240,8 @@
       <button id="seed-btn" class="btn btn-outline btn-sm">Importa catalogo di esempio</button>
     </div>
     <div id="series-list"></div>
+
+    </div>
     </div>
 
     <div id="panel-images" class="admin-panel" style="display:none;">
@@ -291,6 +304,6 @@
 <script src="assets/js/firebase-config.js?v=3"></script>
 <script src="assets/js/catalog-data.js?v=2"></script>
 <script src="assets/js/product-detail.js?v=1"></script>
-<script src="assets/js/admin.js?v=11"></script>
+<script src="assets/js/admin.js?v=12"></script>
 </body>
 </html>

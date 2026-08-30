@@ -669,7 +669,7 @@ const IMAGE_SLOTS = {
 };
 
 function initAdminTabs(){
-  const buttons = document.querySelectorAll('.tabbar button');
+  const buttons = document.querySelectorAll('.tabbar button[data-panel]');
   const panels = document.querySelectorAll('.admin-panel');
   buttons.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -678,6 +678,19 @@ function initAdminTabs(){
       btn.classList.add('active');
       document.getElementById(btn.dataset.panel).style.display = 'block';
       if (btn.dataset.panel === 'panel-images') loadImageSlots();
+    });
+  });
+}
+
+function initCatalogSubTabs(){
+  const buttons = document.querySelectorAll('.tabbar button[data-subpanel]');
+  const panels = document.querySelectorAll('.admin-subpanel');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.style.display = 'none');
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.subpanel).style.display = 'block';
     });
   });
 }
@@ -816,6 +829,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initSeriesForm();
   initPreviewModal();
   initAdminTabs();
+  initCatalogSubTabs();
   initImagesPanel();
   initUserManagement();
 });
