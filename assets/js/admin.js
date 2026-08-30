@@ -355,6 +355,63 @@ function initSeriesForm(){
 }
 
 /* ===========================================================
+   Anteprima pagina prodotto (dati non ancora salvati)
+   =========================================================== */
+
+function buildPreviewSeriesFromForm(){
+  const images = Array.from(document.querySelectorAll('#s-images-rows .s-image-url'))
+    .map(i => i.value.trim()).filter(Boolean);
+  const documents = Array.from(document.querySelectorAll('#s-docs-rows .doc-row')).map(row => ({
+    label: row.querySelector('.s-doc-label').value.trim(),
+    url: row.querySelector('.s-doc-url').value.trim()
+  })).filter(d => d.label && d.url);
+  const features = document.getElementById('s-features').value.split('\n').map(f => f.trim()).filter(Boolean);
+
+  return {
+    id: editingSeriesId || 'preview',
+    name: document.getElementById('s-name').value.trim() || 'Nome modello',
+    tag: document.getElementById('s-tag').value.trim(),
+    categoryId: document.getElementById('s-category').value,
+    description: document.getElementById('s-description').value.trim(),
+    features,
+    images,
+    imageStyle: document.getElementById('s-imageStyle').value,
+    accent: document.getElementById('s-accent').value,
+    datasheetUrl: document.getElementById('s-datasheetUrl').value.trim(),
+    documents
+  };
+}
+
+async function openSeriesPreview(){
+  const series = buildPreviewSeriesFromForm();
+
+  let variants = [];
+  if (editingSeriesId) {
+    const snap = await db.collection('series').doc(editingSeriesId).collection('variants').get();
+    snap.forEach(v => variants.push({ id: v.id, ...v.data() }));
+    variants = variants.filter(v => v.active !== false).sort((a, b) => (a.order || 0) - (b.order || 0));
+  }
+  if (variants.length === 0) {
+    variants = [{ id: 'preview', label: 'Es. 9.000 BTU', model: 'Aggiungi almeno una variante per vederla qui', price: null, priceNote: '' }];
+  }
+
+  const phClass = phClassFor(series);
+  const wrap = document.getElementById('preview-detail-wrap');
+  wrap.innerHTML = detailGalleryHTML(series, phClass) + detailInfoHTML(series, variants);
+  wireVariantSelector(series, variants);
+  wireGalleryThumbs();
+
+  document.getElementById('preview-modal').classList.add('open');
+}
+
+function initPreviewModal(){
+  document.getElementById('preview-btn').addEventListener('click', openSeriesPreview);
+  const close = () => document.getElementById('preview-modal').classList.remove('open');
+  document.getElementById('preview-close-btn').addEventListener('click', close);
+  document.querySelector('.preview-modal-backdrop').addEventListener('click', close);
+}
+
+/* ===========================================================
    Gestione catalogo: Varianti (per ogni modello)
    =========================================================== */
 
@@ -666,6 +723,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initAuth();
   initCategoryForm();
   initSeriesForm();
+  initPreviewModal();
   initAdminTabs();
   initImagesPanel();
   initUserManagement();

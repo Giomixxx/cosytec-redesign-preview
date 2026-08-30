@@ -102,6 +102,10 @@ function wireVariantSelector(series, variants){
 
   if(addBtn){
     addBtn.addEventListener('click', () => {
+      if(typeof addToCart !== 'function'){
+        alert('Il carrello è disponibile solo nella pagina pubblica del prodotto.');
+        return;
+      }
       const v = currentVariant();
       const phClass = phClassFor(series);
       const img = (series.images && series.images[0]) ? series.images[0] : '';
