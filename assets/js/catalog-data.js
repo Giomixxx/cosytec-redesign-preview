@@ -50,11 +50,14 @@ const SEED_BRANDS = [
   { id: 'fondital', name: 'Fondital', categoryId: 'caldaie' },
   { id: 'stelbi', name: 'Stelbi', categoryId: 'caldaie' },
   { id: 'ariston', name: 'Ariston', categoryId: 'caldaie' },
-  { id: 'immergas', name: 'Immergas', categoryId: 'caldaie' },
   { id: 'rinnai', name: 'Rinnai', categoryId: 'caldaie' },
   { id: 'palazzetti', name: 'Palazzetti', categoryId: 'stufe' },
   { id: 'tft', name: 'TFT', categoryId: 'stufe' },
-  { id: 'unical', name: 'Unical', categoryId: 'foto' }
+  { id: 'unical', name: 'Unical', categoryId: 'foto' },
+  { id: 'emmeti', name: 'Emmeti', categoryId: 'daikin' },
+  { id: 'tecnosystemi', name: 'Tecnosystemi', categoryId: 'daikin' },
+  { id: 'clivet', name: 'Clivet', categoryId: 'daikin' },
+  { id: 'manta-ecologica', name: 'Manta Ecologica', categoryId: 'termoidraulica' }
 ];
 
 const SEED_SERIES = [
@@ -148,17 +151,7 @@ const SEED_SERIES = [
     ]
   },
   {
-    id: 'immergas-victrix', categoryId: 'caldaie', tag: 'Immergas', name: 'Immergas Victrix Tera', order: 4,
-    description: "Predisposta idrogeno, con filtro ciclonico di serie.",
-    features: ['Predisposta hydrogen ready', 'Filtro ciclonico anticalcare di serie', 'Sistema Aqua Celeris', 'Alta efficienza'],
-    images: ['assets/img/caldaia-immergas-victrix.png'], imageStyle: 'white', accent: '',
-    datasheetUrl: '', documents: [],
-    variants: [
-      { label: '28 kW', model: 'Victrix Tera 28 V2', price: 1990, priceNote: 'installazione esclusa' }
-    ]
-  },
-  {
-    id: 'rinnai-sensei', categoryId: 'caldaie', tag: 'Rinnai', name: 'Rinnai Infinity Sensei', order: 5,
+    id: 'rinnai-sensei', categoryId: 'caldaie', tag: 'Rinnai', name: 'Rinnai Infinity Sensei', order: 4,
     description: "Scaldabagno istantaneo a condensazione, acqua calda illimitata.",
     features: ['Acqua calda istantanea illimitata', 'Alta efficienza a condensazione', 'Installazione da esterno', 'Garanzia estesa disponibile'],
     images: ['assets/img/scaldabagno-rinnai.png'], imageStyle: 'white', accent: '',
