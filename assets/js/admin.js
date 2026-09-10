@@ -252,15 +252,57 @@ function rowInputStyle(){
   return 'padding:10px 14px; border-radius:var(--radius-sm); border:1.5px solid var(--ink-100); font-size:13.5px; font-family:inherit; background:var(--paper-50); color:var(--ink-800);';
 }
 
+/* ===========================================================
+   Upload file (immagini/PDF) tramite l'endpoint PHP su Aruba
+   =========================================================== */
+
+const UPLOAD_ENDPOINT = 'https://upload.cosytec.it/upload.php';
+
+async function uploadFileToServer(file){
+  const token = await auth.currentUser.getIdToken();
+  const formData = new FormData();
+  formData.append('file', file);
+  const res = await fetch(UPLOAD_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + token },
+    body: formData
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || 'Caricamento non riuscito.');
+  return data.url;
+}
+
+function wireFileUpload(fileInput, label, urlInput){
+  fileInput.addEventListener('change', async () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+    const originalHTML = label.innerHTML;
+    label.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+    try {
+      urlInput.value = await uploadFileToServer(file);
+    } catch (err) {
+      alert('Caricamento non riuscito: ' + err.message);
+    } finally {
+      label.innerHTML = originalHTML;
+      fileInput.value = '';
+    }
+  });
+}
+
 function addImageRow(url){
   const wrap = document.getElementById('s-images-rows');
   const row = document.createElement('div');
   row.className = 'img-row';
-  row.style.cssText = 'display:flex; gap:8px; margin-bottom:8px;';
+  row.style.cssText = 'display:flex; gap:8px; margin-bottom:8px; align-items:center;';
   row.innerHTML = `
-    <input type="url" class="s-image-url" placeholder="https://..." value="${url || ''}" style="flex:1; ${rowInputStyle()}">
+    <input type="url" class="s-image-url" placeholder="https://... oppure carica un file" value="${url || ''}" style="flex:1; ${rowInputStyle()}">
+    <label class="upload-label" style="margin:0;">
+      <i class="fa-solid fa-upload"></i>
+      <input type="file" class="s-image-file" accept="image/jpeg,image/png,image/webp,image/gif" style="display:none;">
+    </label>
     <button type="button" class="btn btn-sm remove-row-btn" style="background:#e0413c;color:#fff;">✕</button>`;
   row.querySelector('.remove-row-btn').addEventListener('click', () => row.remove());
+  wireFileUpload(row.querySelector('.s-image-file'), row.querySelector('.upload-label'), row.querySelector('.s-image-url'));
   wrap.appendChild(row);
 }
 
@@ -268,12 +310,17 @@ function addDocRow(label, url){
   const wrap = document.getElementById('s-docs-rows');
   const row = document.createElement('div');
   row.className = 'doc-row';
-  row.style.cssText = 'display:flex; gap:8px; margin-bottom:8px;';
+  row.style.cssText = 'display:flex; gap:8px; margin-bottom:8px; align-items:center;';
   row.innerHTML = `
     <input type="text" class="s-doc-label" placeholder="Es. Dichiarazione conformità" value="${label || ''}" style="flex:1; ${rowInputStyle()}">
-    <input type="url" class="s-doc-url" placeholder="https://..." value="${url || ''}" style="flex:1.4; ${rowInputStyle()}">
+    <input type="url" class="s-doc-url" placeholder="https://... oppure carica un file" value="${url || ''}" style="flex:1.4; ${rowInputStyle()}">
+    <label class="upload-label" style="margin:0;">
+      <i class="fa-solid fa-upload"></i>
+      <input type="file" class="s-doc-file" accept="application/pdf,image/jpeg,image/png,image/webp" style="display:none;">
+    </label>
     <button type="button" class="btn btn-sm remove-row-btn" style="background:#e0413c;color:#fff;">✕</button>`;
   row.querySelector('.remove-row-btn').addEventListener('click', () => row.remove());
+  wireFileUpload(row.querySelector('.s-doc-file'), row.querySelector('.upload-label'), row.querySelector('.s-doc-url'));
   wrap.appendChild(row);
 }
 
@@ -396,6 +443,8 @@ function initSeriesForm(){
   });
   document.getElementById('add-image-row-btn').addEventListener('click', () => addImageRow());
   document.getElementById('add-doc-row-btn').addEventListener('click', () => addDocRow());
+  const datasheetFileInput = document.getElementById('s-datasheet-file');
+  wireFileUpload(datasheetFileInput, datasheetFileInput.closest('label.upload-label'), document.getElementById('s-datasheetUrl'));
 
   document.getElementById('series-form').addEventListener('submit', async (e) => {
     e.preventDefault();

@@ -191,7 +191,8 @@
         </div>
 
         <div class="field">
-          <label>Immagini prodotto (URL, la prima è la copertina)</label>
+          <label>Immagini prodotto (la prima è la copertina)</label>
+          <p style="margin:0 0 10px; font-size:12.5px; color:var(--ink-300);">Carica un file dal computer con l'icona, oppure incolla direttamente un link.</p>
           <div id="s-images-rows"></div>
           <button type="button" id="add-image-row-btn" class="btn btn-outline btn-sm" style="margin-top:8px;">+ Aggiungi immagine</button>
         </div>
@@ -217,12 +218,19 @@
         </div>
 
         <div class="field">
-          <label>URL scheda tecnica ufficiale PDF (facoltativo)</label>
-          <input type="url" id="s-datasheetUrl" placeholder="https://... (lascia vuoto se non disponibile)">
+          <label>Scheda tecnica ufficiale PDF (facoltativa)</label>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <input type="url" id="s-datasheetUrl" placeholder="https://... oppure carica un file" style="flex:1;">
+            <label class="upload-label" style="margin:0;">
+              <i class="fa-solid fa-upload"></i>
+              <input type="file" id="s-datasheet-file" accept="application/pdf" style="display:none;">
+            </label>
+          </div>
         </div>
 
         <div class="field">
           <label>Documentazione e certificazioni (dichiarazioni, certificazioni, Conto Termico...)</label>
+          <p style="margin:0 0 10px; font-size:12.5px; color:var(--ink-300);">Carica un file dal computer con l'icona, oppure incolla direttamente un link.</p>
           <div id="s-docs-rows"></div>
           <button type="button" id="add-doc-row-btn" class="btn btn-outline btn-sm" style="margin-top:8px;">+ Aggiungi documento</button>
         </div>
@@ -304,6 +312,6 @@
 <script src="assets/js/firebase-config.js?v=3"></script>
 <script src="assets/js/catalog-data.js?v=2"></script>
 <script src="assets/js/product-detail.js?v=1"></script>
-<script src="assets/js/admin.js?v=12"></script>
+<script src="assets/js/admin.js?v=13"></script>
 </body>
 </html>
