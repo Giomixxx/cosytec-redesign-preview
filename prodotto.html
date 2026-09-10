@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="icon" href="assets/img/favicon-32.png">
-<link rel="stylesheet" href="assets/css/style.css?v=7">
+<link rel="stylesheet" href="assets/css/style.css?v=8">
 <style>
   .detail-wrap{ display:grid; grid-template-columns:1fr 1fr; gap:50px; align-items:start; }
   @media (max-width:900px){ .detail-wrap{ grid-template-columns:1fr; } }
@@ -33,6 +33,9 @@
   .doc-list a:hover{ border-color:var(--flame-500); color:var(--flame-600); }
   .doc-list a i{ color:var(--flame-600); font-size:16px; }
   #added-feedback{ display:none; margin-top:12px; font-size:13.5px; color:var(--success); font-weight:600; }
+  .detail-long-description{ margin-top:50px; max-width:760px; }
+  .detail-long-description h2{ font-size:21px; margin-bottom:16px; }
+  .detail-long-description p{ color:var(--ink-500); line-height:1.8; margin-bottom:16px; font-size:15px; }
 </style>
 </head>
 <body>
@@ -160,8 +163,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=3"></script>
-<script src="assets/js/catalog-data.js?v=2"></script>
-<script src="assets/js/main.js?v=3"></script>
-<script src="assets/js/product-detail.js?v=1"></script>
+<script src="assets/js/catalog-data.js?v=3"></script>
+<script src="assets/js/main.js?v=4"></script>
+<script src="assets/js/product-detail.js?v=2"></script>
 </body>
 </html>

@@ -327,7 +327,7 @@ nav.main-links a.active{ color:var(--flame-600); }
 
 /* CTA band */
 .cta-band{ background:var(--grad-warm); border-radius:var(--radius-lg); padding:60px; display:flex; align-items:center; justify-content:space-between; gap:30px; color:#fff; position:relative; overflow:hidden; }
-.cta-band::after{ content:""; position:absolute; inset:0; background-image:radial-gradient(circle at 90% 10%, rgba(255,255,255,.25), transparent 40%); }
+.cta-band::after{ content:""; position:absolute; inset:0; background-image:radial-gradient(circle at 90% 10%, rgba(255,255,255,.25), transparent 40%); pointer-events:none; }
 .cta-band h2{ color:#fff; font-size:clamp(24px,3vw,34px); max-width:520px; position:relative; }
 .cta-band p{ color:rgba(255,255,255,.85); position:relative; }
 .cta-band .actions{ position:relative; display:flex; gap:14px; flex-shrink:0; flex-wrap:wrap; }
@@ -493,3 +493,12 @@ footer .contact-item i{ color:var(--flame-400); margin-top:3px; }
 .flex{display:flex;} .items-center{align-items:center;} .gap-10{gap:10px;}
 .reveal{ opacity:0; transform:translateY(24px); transition:opacity .6s ease, transform .6s ease; }
 .reveal.in{ opacity:1; transform:translateY(0); }
+
+/* Pulsante WhatsApp fisso */
+.whatsapp-fab{
+  position:fixed; right:24px; bottom:24px; width:60px; height:60px; border-radius:50%;
+  background:#25D366; color:#fff; display:flex; align-items:center; justify-content:center;
+  font-size:28px; box-shadow:0 8px 24px rgba(37,211,102,.4); z-index:400; transition:transform .2s, background .2s;
+}
+.whatsapp-fab:hover{ transform:scale(1.08); background:#1ebe5a; color:#fff; }
+@media (max-width:560px){ .whatsapp-fab{ width:52px; height:52px; font-size:24px; right:16px; bottom:16px; } }

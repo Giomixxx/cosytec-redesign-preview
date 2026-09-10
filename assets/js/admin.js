@@ -380,7 +380,8 @@ function seriesRowHTML(s){
 function seriesRowSummary(s, catName){
   const priceLabel = s.minPrice != null ? `da ${euroFmt(s.minPrice)}` : 'Nessuna variante';
   const count = s.variantCount || 0;
-  return `${catName} · ${s.tag || ''} · ${priceLabel} · ${count} variant${count === 1 ? 'e' : 'i'} ${s.active === false ? '· <em>Nascosto</em>' : ''}`;
+  const featuredBadge = s.featured === true ? ' · <b style="color:var(--flame-600);">★ In evidenza</b>' : '';
+  return `${catName} · ${s.tag || ''} · ${priceLabel} · ${count} variant${count === 1 ? 'e' : 'i'} ${s.active === false ? '· <em>Nascosto</em>' : ''}${featuredBadge}`;
 }
 
 async function refreshSeriesRowSummary(seriesId){
@@ -404,6 +405,8 @@ async function editSeries(id){
   populateTagSelect(s.categoryId || document.getElementById('s-category').value, s.tag || '');
   document.getElementById('s-order').value = s.order != null ? s.order : '';
   document.getElementById('s-description').value = s.description || '';
+  document.getElementById('s-longDescription').value = s.longDescription || '';
+  document.getElementById('s-featured').checked = s.featured === true;
   document.getElementById('s-features').value = (s.features || []).join('\n');
   document.getElementById('s-imageStyle').value = s.imageStyle || 'white';
   document.getElementById('s-accent').value = s.accent || 'cool';
@@ -462,6 +465,8 @@ function initSeriesForm(){
       categoryId: document.getElementById('s-category').value,
       order: parseInt(document.getElementById('s-order').value) || 0,
       description: document.getElementById('s-description').value.trim(),
+      longDescription: document.getElementById('s-longDescription').value.trim(),
+      featured: document.getElementById('s-featured').checked,
       features,
       images,
       imageStyle: document.getElementById('s-imageStyle').value,
@@ -512,6 +517,7 @@ function buildPreviewSeriesFromForm(){
     tag: document.getElementById('s-tag').value.trim(),
     categoryId: document.getElementById('s-category').value,
     description: document.getElementById('s-description').value.trim(),
+    longDescription: document.getElementById('s-longDescription').value.trim(),
     features,
     images,
     imageStyle: document.getElementById('s-imageStyle').value,
@@ -537,6 +543,7 @@ async function openSeriesPreview(){
   const phClass = phClassFor(series);
   const wrap = document.getElementById('preview-detail-wrap');
   wrap.innerHTML = detailGalleryHTML(series, phClass) + detailInfoHTML(series, variants);
+  document.getElementById('preview-long-description').innerHTML = longDescriptionHTML(series);
   wireVariantSelector(series, variants);
   wireGalleryThumbs();
 

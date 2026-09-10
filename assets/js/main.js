@@ -289,6 +289,19 @@ function initCheckout(){
   });
 }
 
+// ---------- Pulsante WhatsApp fisso ----------
+function initWhatsAppFab(){
+  if (document.querySelector('.whatsapp-fab')) return;
+  const fab = document.createElement('a');
+  fab.href = 'https://wa.me/393272326589';
+  fab.target = '_blank';
+  fab.rel = 'noopener';
+  fab.className = 'whatsapp-fab';
+  fab.setAttribute('aria-label', 'Scrivici su WhatsApp');
+  fab.innerHTML = '<i class="fa-brands fa-whatsapp"></i>';
+  document.body.appendChild(fab);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initDrawer();
   initReveal();
@@ -300,4 +313,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initQuoteForm();
   renderCartPage();
   initCheckout();
+  initWhatsAppFab();
 });

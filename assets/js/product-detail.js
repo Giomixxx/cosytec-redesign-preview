@@ -138,6 +138,17 @@ function wireGalleryThumbs(){
   });
 }
 
+function longDescriptionHTML(series){
+  if(!series.longDescription) return '';
+  const paragraphs = series.longDescription.split(/\n{2,}/).map(p => p.trim()).filter(Boolean);
+  const html = paragraphs.map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('');
+  return `
+    <div class="detail-long-description reveal">
+      <h2>Descrizione dettagliata</h2>
+      ${html}
+    </div>`;
+}
+
 async function renderProductDetailPage(){
   const id = getQueryParam('id');
   const root = document.getElementById('detail-root');
@@ -166,7 +177,7 @@ async function renderProductDetailPage(){
     breadcrumb.innerHTML = `<a href="index.html">Home</a> / <a href="prodotti.html">Prodotti</a> / ${series.name}`;
   }
 
-  root.innerHTML = `<div class="detail-wrap">${detailGalleryHTML(series, phClass)}${detailInfoHTML(series, variants)}</div>`;
+  root.innerHTML = `<div class="detail-wrap">${detailGalleryHTML(series, phClass)}${detailInfoHTML(series, variants)}</div>${longDescriptionHTML(series)}`;
 
   wireVariantSelector(series, variants);
   wireGalleryThumbs();

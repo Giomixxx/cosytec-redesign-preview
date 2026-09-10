@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="icon" href="assets/img/favicon-32.png">
-<link rel="stylesheet" href="assets/css/style.css?v=7">
+<link rel="stylesheet" href="assets/css/style.css?v=8">
 </head>
 <body data-page="home">
 
@@ -151,43 +151,8 @@
       <h2>I prodotti più richiesti</h2>
       <p>Una selezione delle soluzioni che installiamo più spesso, con marchi affidabili e garanzia ufficiale.</p>
     </div>
-    <div class="grid grid-4">
-      <div class="product-card reveal">
-        <div class="ph ph-cool ph-photo"><img src="assets/img/daikin-sensira.png" alt="Climatizzatore Daikin Sensira"></div>
-        <div class="body">
-          <span class="tag">Daikin</span>
-          <h3>Climatizzatore Sensira 9000 BTU</h3>
-          <p>Silenzioso, efficiente ed elegante per ogni ambiente domestico.</p>
-          <div class="price-row"><span class="price">da €549</span><a href="prodotto.html?id=daikin-sensira" class="btn btn-outline btn-sm">Dettagli</a></div>
-        </div>
-      </div>
-      <div class="product-card reveal">
-        <div class="ph ph-white"><img src="assets/img/caldaia-fondital.jpg" alt="Caldaia Fondital Ischia"></div>
-        <div class="body">
-          <span class="tag">Fondital</span>
-          <h3>Caldaia Ischia 24kW</h3>
-          <p>Caldaia a condensazione ad alta efficienza, ideale per appartamenti.</p>
-          <div class="price-row"><span class="price">da €1.290</span><a href="prodotto.html?id=fondital-ischia" class="btn btn-outline btn-sm">Dettagli</a></div>
-        </div>
-      </div>
-      <div class="product-card reveal">
-        <div class="ph ph-white"><img src="assets/img/caldaia-stelbi-primus.png" alt="Caldaia Stelbi Primus"></div>
-        <div class="body">
-          <span class="tag">Stelbi</span>
-          <h3>Caldaia Primus 24kW</h3>
-          <p>Robustezza e prestazioni costanti nel tempo, garanzia estesa.</p>
-          <div class="price-row"><span class="price">da €1.190</span><a href="prodotto.html?id=stelbi-primus" class="btn btn-outline btn-sm">Dettagli</a></div>
-        </div>
-      </div>
-      <div class="product-card reveal">
-        <div class="ph ph-navy ph-cover"><img src="assets/img/fotovoltaico-2.jpg" alt="Impianto fotovoltaico residenziale"></div>
-        <div class="body">
-          <span class="tag">Fotovoltaico</span>
-          <h3>Kit Solare 3kW residenziale</h3>
-          <p>Pannelli e inverter per iniziare a risparmiare in bolletta da subito.</p>
-          <div class="price-row"><span class="price">da €3.490</span><a href="prodotto.html?id=kit-solare-residenziale" class="btn btn-outline btn-sm">Dettagli</a></div>
-        </div>
-      </div>
+    <div class="grid grid-4" id="featured-products-grid">
+      <p style="color:var(--ink-300);">Caricamento...</p>
     </div>
   </div>
 </section>
@@ -314,7 +279,9 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=3"></script>
+<script src="assets/js/catalog-data.js?v=3"></script>
 <script src="assets/js/site-images.js?v=1"></script>
-<script src="assets/js/main.js?v=3"></script>
+<script src="assets/js/main.js?v=4"></script>
+<script>renderFeaturedHome();</script>
 </body>
 </html>

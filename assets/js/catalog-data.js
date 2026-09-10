@@ -14,6 +14,7 @@
      tag           string   marchio/etichetta card (es. "Daikin")
      name          string   nome del modello
      description   string   descrizione breve
+     longDescription string descrizione dettagliata (facoltativa), mostrata nella pagina prodotto
      features      array<string>   caratteristiche principali
      images        array<string>   URL immagini (la prima è quella di copertina)
      imageStyle    string   photo | white | cover
@@ -22,6 +23,7 @@
      documents     array<{label,url}>   documentazione e certificazioni
      minPrice      number   calcolato: prezzo più basso tra le varianti
      variantCount  number   calcolato: numero varianti
+     featured      boolean  se true, compare nella sezione "Prodotti più richiesti" in Home (max 4)
      order         number
      active        boolean
 
@@ -57,7 +59,7 @@ const SEED_BRANDS = [
 
 const SEED_SERIES = [
   {
-    id: 'daikin-sensira', categoryId: 'daikin', tag: 'Daikin', name: 'Daikin Sensira', order: 1,
+    id: 'daikin-sensira', categoryId: 'daikin', tag: 'Daikin', name: 'Daikin Sensira', order: 1, featured: true,
     description: "Il climatizzatore entry-level Daikin: compatto, silenzioso ed efficiente per ogni ambiente domestico.",
     features: ['Classe energetica A++', 'Gas refrigerante ecologico R32', 'Livello sonoro molto basso', 'Filtro purificatore integrato'],
     images: ['assets/img/daikin-sensira.png'], imageStyle: 'photo', accent: 'cool',
@@ -114,7 +116,7 @@ const SEED_SERIES = [
   },
 
   {
-    id: 'fondital-ischia', categoryId: 'caldaie', tag: 'Fondital', name: 'Fondital Ischia', order: 1,
+    id: 'fondital-ischia', categoryId: 'caldaie', tag: 'Fondital', name: 'Fondital Ischia', order: 1, featured: true,
     description: "Caldaia murale a condensazione, ideale per appartamenti fino a 120mq.",
     features: ['Alta efficienza a condensazione', 'Predisposta per app di controllo remoto', 'Classe energetica A', 'Ingombro ridotto'],
     images: ['assets/img/caldaia-fondital.jpg'], imageStyle: 'white', accent: '',
@@ -124,7 +126,7 @@ const SEED_SERIES = [
     ]
   },
   {
-    id: 'stelbi-primus', categoryId: 'caldaie', tag: 'Stelbi', name: 'Stelbi Primus', order: 2,
+    id: 'stelbi-primus', categoryId: 'caldaie', tag: 'Stelbi', name: 'Stelbi Primus', order: 2, featured: true,
     description: "Affidabilità e prestazioni costanti nel tempo, garanzia estesa a 5 anni.",
     features: ['Garanzia estesa a 5 anni', 'Metano/GPL', 'Fino a 200 mq riscaldabili', 'Classe energetica A'],
     images: ['assets/img/caldaia-stelbi-primus.png'], imageStyle: 'white', accent: '',
@@ -200,7 +202,7 @@ const SEED_SERIES = [
   },
 
   {
-    id: 'kit-solare-residenziale', categoryId: 'foto', tag: 'Fotovoltaico', name: 'Kit Solare Residenziale', order: 1,
+    id: 'kit-solare-residenziale', categoryId: 'foto', tag: 'Fotovoltaico', name: 'Kit Solare Residenziale', order: 1, featured: true,
     description: "Pannelli monocristallini e inverter, per iniziare a risparmiare in bolletta da subito.",
     features: ['Pannelli monocristallini ad alta efficienza', 'Inverter incluso', 'Possibilità di accumulo con batteria', 'Chiavi in mano'],
     images: ['assets/img/fotovoltaico-1.jpg', 'assets/img/fotovoltaico-2.jpg'], imageStyle: 'cover', accent: 'navy',
@@ -237,9 +239,11 @@ async function importSeedCatalog(){
     const seriesRef = db.collection('series').doc(s.id);
     await seriesRef.set({
       categoryId: s.categoryId, tag: s.tag, name: s.name, description: s.description,
+      longDescription: s.longDescription || '',
       features: s.features || [], images: s.images || [], imageStyle: s.imageStyle, accent: s.accent || '',
       datasheetUrl: s.datasheetUrl || '', documents: s.documents || [],
       minPrice: Math.min(...prices), variantCount: s.variants.length,
+      featured: s.featured === true,
       order: s.order, active: true,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
@@ -280,6 +284,11 @@ async function fetchAllSeries(){
     console.warn('Modelli da Firestore non disponibili, uso quelli di base.', err);
     return flattenSeedSeries();
   }
+}
+
+async function fetchFeaturedSeries(limitCount){
+  const all = await fetchAllSeries();
+  return all.filter(s => s.featured === true).slice(0, limitCount || 4);
 }
 
 function flattenSeedSeries(){
@@ -378,5 +387,15 @@ async function renderShopPage(){
   const countEl = document.querySelector('.shop-toolbar span');
   if (countEl) countEl.textContent = seriesAll.length + ' modelli disponibili';
   if (typeof initShopFilters === 'function') initShopFilters();
+  if (typeof initReveal === 'function') initReveal();
+}
+
+async function renderFeaturedHome(){
+  const grid = document.getElementById('featured-products-grid');
+  if (!grid) return;
+  const featured = await fetchFeaturedSeries(4);
+  grid.innerHTML = featured.length
+    ? featured.map(seriesCardHTML).join('')
+    : '<p style="color:var(--ink-300);">Nessun prodotto in evidenza al momento.</p>';
   if (typeof initReveal === 'function') initReveal();
 }
