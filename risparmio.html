@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Risparmio e Finanziamenti — Cosytec</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="icon" href="assets/img/favicon-32.png">
+<link rel="stylesheet" href="assets/css/style.css?v=8">
+<style>
+  .sim-result{ display:none; margin-top:24px; padding:24px; background:var(--paper-100); border-radius:var(--radius-md); }
+  .sim-result.show{ display:block; }
+  .sim-result .range{ font-family:'Poppins',sans-serif; font-weight:700; font-size:28px; color:var(--ink-900); margin-bottom:4px; }
+  .sim-result .label{ font-size:13.5px; color:var(--ink-500); margin-bottom:14px; }
+  .sim-result .disclaimer{ font-size:12.5px; color:var(--ink-300); margin-bottom:18px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="container">
+    <div class="topbar-links">
+      <a href="tel:0916371137"><i class="fa-solid fa-phone"></i> 091 637 1137</a>
+      <a href="mailto:info@cosytec.it"><i class="fa-solid fa-envelope"></i> info@cosytec.it</a>
+      <a href="chi-siamo.html#dove"><i class="fa-solid fa-location-dot"></i> Via Sant'Antonio, 49 — Bagheria</a>
+    </div>
+    <div class="topbar-social">
+      <a href="#"><i class="fa-brands fa-facebook"></i></a>
+      <a href="#"><i class="fa-brands fa-instagram"></i></a>
+    </div>
+  </div>
+</div>
+
+<header class="nav">
+  <div class="container nav-row">
+    <a href="index.html" class="logo"><span class="mark"><img src="assets/img/logo-mark.png" alt="Cosytec"></span> COSYTEC<small>Termoidraulica &amp; Clima</small></a>
+    <nav class="main-links">
+      <a href="index.html">Home</a>
+      <a href="chi-siamo.html">Chi Siamo</a>
+      <a href="prodotti.html">Prodotti</a>
+      <a href="risparmio.html" class="active">Risparmio</a>
+      <a href="galleria.html">Galleria</a>
+      <a href="shop.html">Shop</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="shop.html" class="cart-btn"><i class="fa-solid fa-cart-shopping"></i><span class="cart-count">0</span></a>
+      <a href="preventivo.html" class="btn btn-primary btn-sm">Preventivo gratuito</a>
+      <button class="burger"><i class="fa-solid fa-bars"></i></button>
+    </div>
+  </div>
+</header>
+
+<div class="mobile-drawer">
+  <div class="backdrop"></div>
+  <div class="panel">
+    <button class="close-drawer"><i class="fa-solid fa-xmark"></i></button>
+    <a href="index.html">Home</a>
+    <a href="chi-siamo.html">Chi Siamo</a>
+    <a href="prodotti.html">Prodotti</a>
+    <a href="risparmio.html">Risparmio</a>
+    <a href="galleria.html">Galleria</a>
+    <a href="shop.html">Shop</a>
+    <a href="cassa.html">Carrello</a>
+    <a href="preventivo.html" class="btn btn-primary" style="margin-top:16px;text-align:center;border:none;">Richiedi preventivo</a>
+  </div>
+</div>
+
+<section class="page-hero">
+  <div class="container">
+    <div class="breadcrumb"><a href="index.html">Home</a> / Risparmio e Finanziamenti</div>
+    <h1>Risparmio e Finanziamenti</h1>
+    <p>Ci sono più modi per rendere accessibile il tuo impianto: incentivi statali, detrazioni fiscali e finanziamenti a rate. Ti aiutiamo a capire quali si applicano al tuo caso.</p>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="section-head center reveal">
+      <span class="eyebrow"><i class="fa-solid fa-sack-dollar"></i> Le tre strade</span>
+      <h2>Come rendere il tuo impianto più conveniente</h2>
+      <p>Spesso si possono anche combinare tra loro: parliamone insieme durante il sopralluogo.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="service-card reveal">
+        <div class="icon ph-warm"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+        <h3>Conto Termico 3.0</h3>
+        <p>Incentivo statale (GSE) che rimborsa una parte della spesa per pompe di calore, caldaie a biomassa, stufe a pellet e solare termico, erogato in rate nel tempo.</p>
+        <a href="#simulatore" class="link">Stima il tuo incentivo <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+      <div class="service-card reveal">
+        <div class="icon ph-cool"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+        <h3>Detrazione fiscale</h3>
+        <p>Recuperi una percentuale della spesa direttamente in dichiarazione dei redditi, in quote annuali distribuite su più anni. Si applica a molti dei nostri interventi.</p>
+        <a href="preventivo.html" class="link">Chiedi se il tuo caso rientra <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+      <div class="service-card reveal">
+        <div class="icon ph-duo"><i class="fa-solid fa-credit-card"></i></div>
+        <h3>Finanziamento a rate</h3>
+        <p>Puoi dilazionare la spesa con Findomestic o Compass, con pratica attivabile direttamente da noi in negozio, anche in combinazione con gli incentivi.</p>
+        <a href="preventivo.html" class="link">Richiedi informazioni <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="simulatore">
+  <div class="container">
+    <div class="form-wrap">
+      <div class="card-panel reveal">
+        <h3 style="margin-bottom:6px;">Stima il tuo incentivo Conto Termico</h3>
+        <p style="margin-bottom:24px;">Una stima indicativa in pochi secondi: per l'importo esatto serve una verifica tecnica, gratuita e senza impegno.</p>
+        <form id="simulatore-form">
+          <div class="field">
+            <label>Tipo di intervento</label>
+            <select id="sim-tipo" required>
+              <option value="">Seleziona il tipo di intervento</option>
+              <option value="pompa-calore">Climatizzatore a pompa di calore</option>
+              <option value="ibrido">Sistema ibrido (caldaia + pompa di calore)</option>
+              <option value="biomassa">Caldaia a biomassa / pellet</option>
+              <option value="stufa-pellet">Stufa a pellet</option>
+              <option value="solare-termico">Solare termico</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Comune dell'intervento</label>
+            <input type="text" id="sim-comune" placeholder="Es. Bagheria">
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Calcola la stima <i class="fa-solid fa-calculator"></i></button>
+        </form>
+
+        <div class="sim-result" id="sim-result">
+          <div class="range" id="sim-result-value">—</div>
+          <div class="label" id="sim-result-label"></div>
+          <div class="disclaimer">Stima indicativa a titolo puramente orientativo, non vincolante: l'importo reale dipende da potenza dell'impianto, zona climatica e altri parametri tecnici stabiliti dal GSE.</div>
+          <a href="preventivo.html" id="sim-cta-btn" class="btn btn-dark btn-block">Richiedi la verifica esatta gratuita</a>
+        </div>
+      </div>
+
+      <div class="reveal">
+        <span class="eyebrow ice"><i class="fa-solid fa-circle-info"></i> Come funziona</span>
+        <h2>Un percorso semplice, seguito da noi dall'inizio alla fine</h2>
+        <ul class="info-list">
+          <li>
+            <span class="ic ph-warm"><i class="fa-solid fa-magnifying-glass"></i></span>
+            <div><b>1. Sopralluogo gratuito</b><span>Valutiamo l'intervento più adatto alla tua casa.</span></div>
+          </li>
+          <li>
+            <span class="ic ph-cool"><i class="fa-solid fa-file-signature"></i></span>
+            <div><b>2. Verifica degli incentivi</b><span>Controlliamo quali incentivi e detrazioni puoi ottenere davvero.</span></div>
+          </li>
+          <li>
+            <span class="ic ph-duo"><i class="fa-solid fa-screwdriver-wrench"></i></span>
+            <div><b>3. Installazione</b><span>Realizziamo l'impianto a regola d'arte, con garanzia ufficiale.</span></div>
+          </li>
+          <li>
+            <span class="ic ph-navy"><i class="fa-solid fa-euro-sign"></i></span>
+            <div><b>4. Pratica incentivi</b><span>Ti seguiamo anche nella richiesta della pratica, passo per passo.</span></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0;">
+  <div class="container">
+    <div class="cta-band reveal">
+      <div>
+        <h2>Non sai quale soluzione fa per te?</h2>
+        <p>Raccontaci la tua situazione: ti diciamo subito quali incentivi puoi ottenere, senza impegno.</p>
+      </div>
+      <div class="actions">
+        <a href="preventivo.html" class="btn btn-dark">Richiedi una verifica gratuita</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="index.html" class="logo"><span class="mark"><img src="assets/img/logo-mark.png" alt="Cosytec"></span> COSYTEC</a>
+        <div class="footer-social">
+          <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div>
+        <h4>Link utili</h4>
+        <ul>
+          <li><a href="chi-siamo.html">Chi siamo</a></li>
+          <li><a href="prodotti.html">Prodotti</a></li>
+          <li><a href="risparmio.html">Risparmio</a></li>
+          <li><a href="galleria.html">Galleria</a></li>
+          <li><a href="shop.html">Shop</a></li>
+          <li><a href="preventivo.html">Preventivo</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Servizi</h4>
+        <ul>
+          <li><a href="prodotti.html">Riscaldamento</a></li>
+          <li><a href="prodotti.html">Climatizzazione</a></li>
+          <li><a href="prodotti.html">Fotovoltaico</a></li>
+          <li><a href="prodotti.html">Stufe &amp; Camini</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contatti</h4>
+        <div class="contact-item"><i class="fa-solid fa-location-dot"></i><span>Via Sant'Antonio, 49 — Bagheria (PA)</span></div>
+        <div class="contact-item"><i class="fa-solid fa-phone"></i><span><a href="tel:0916371137" style="color:inherit;">091 637 1137</a> · <a href="tel:+393272326589" style="color:inherit;">327 2326589</a> <a href="https://wa.me/393272326589" target="_blank" rel="noopener" style="color:inherit;" title="Scrivi su WhatsApp"><i class="fa-brands fa-whatsapp"></i></a></span></div>
+        <div class="contact-item"><i class="fa-solid fa-envelope"></i><span>info@cosytec.it</span></div>
+        <div class="contact-item"><i class="fa-solid fa-clock"></i><span>Lun–Ven 9:00–13:00 / 15:30–19:30<br>Sab 9:00–13:00</span></div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Cosytec Soc. Coop. — P.IVA 06592180829. Tutti i diritti riservati.</span>
+      <span>Privacy Policy · Cookie Policy · <a href="admin.html" style="color:inherit;">Area riservata</a></span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js?v=5"></script>
+<script src="assets/js/risparmio.js?v=1"></script>
+</body>
+</html>

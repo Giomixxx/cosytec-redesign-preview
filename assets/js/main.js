@@ -154,6 +154,26 @@ function initTabs(){
 // Sostituire con l'indirizzo del proprio form: https://formspree.io/f/xxxxxxxx
 const FORMSPREE_ENDPOINT = 'INSERISCI_ENDPOINT_FORMSPREE';
 
+function prefillQuoteFromQuery(){
+  const form = document.querySelector('#quote-form');
+  if(!form) return;
+  const params = new URLSearchParams(window.location.search);
+  const intervento = params.get('intervento');
+  const comune = params.get('comune');
+  if(!intervento && !comune) return;
+
+  const servizioField = form.querySelector('[name="servizio"]');
+  if(servizioField) servizioField.value = 'Riscaldamento / Caldaie';
+
+  const msgField = form.querySelector('[name="messaggio"]');
+  if(msgField){
+    let text = 'Richiesta di verifica Conto Termico';
+    if(intervento) text += ` per: ${intervento}`;
+    if(comune) text += ` (Comune: ${comune})`;
+    msgField.value = text + '.';
+  }
+}
+
 function initQuoteForm(){
   const form = document.querySelector('#quote-form');
   if(!form) return;
@@ -311,6 +331,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initGallery();
   initTabs();
   initQuoteForm();
+  prefillQuoteFromQuery();
   renderCartPage();
   initCheckout();
   initWhatsAppFab();
