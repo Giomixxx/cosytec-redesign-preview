@@ -143,7 +143,7 @@ function longDescriptionHTML(series){
   const paragraphs = series.longDescription.split(/\n{2,}/).map(p => p.trim()).filter(Boolean);
   const html = paragraphs.map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('');
   return `
-    <div class="detail-long-description reveal">
+    <div class="detail-long-description">
       <h2>Descrizione dettagliata</h2>
       ${html}
     </div>`;
