@@ -152,7 +152,7 @@ function initTabs(){
 
 // ---------- Preventivo form (invio reale via Formspree) ----------
 // Sostituire con l'indirizzo del proprio form: https://formspree.io/f/xxxxxxxx
-const FORMSPREE_ENDPOINT = 'INSERISCI_ENDPOINT_FORMSPREE';
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xwlkdybl';
 
 function prefillQuoteFromQuery(){
   const form = document.querySelector('#quote-form');

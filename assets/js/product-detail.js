@@ -52,7 +52,7 @@ function detailInfoHTML(series, variants){
           <select id="variant-select">${variantOptions}</select>
         </div>
         <div class="row"><span>Modello</span><b id="variant-model">—</b></div>
-        <div class="row"><span>Prezzo</span><span class="price-big" id="variant-price">—</span></div>
+        <div class="row"><span>Prezzo</span><span id="variant-price-wrap"><span class="price-big" id="variant-price">—</span></span></div>
         <div class="row" id="variant-note-row" style="display:none;"><span id="variant-note" style="color:var(--ink-300);"></span></div>
       </div>
 
@@ -72,7 +72,6 @@ function detailInfoHTML(series, variants){
 function wireVariantSelector(series, variants){
   const select = document.getElementById('variant-select');
   const modelEl = document.getElementById('variant-model');
-  const priceEl = document.getElementById('variant-price');
   const noteRow = document.getElementById('variant-note-row');
   const noteEl = document.getElementById('variant-note');
   const waBtn = document.getElementById('whatsapp-btn');
@@ -86,7 +85,15 @@ function wireVariantSelector(series, variants){
   function update(){
     const v = currentVariant();
     modelEl.textContent = v.model || '—';
-    priceEl.textContent = (v.price != null) ? euro(v.price) : 'Su richiesta';
+    const priceWrap = document.getElementById('variant-price-wrap');
+    if(v.ctPrice != null){
+      priceWrap.innerHTML = `
+        <s style="display:block; color:var(--ink-300); font-size:14px; font-weight:500;">${euro(v.price)}</s>
+        <span class="price-big" style="color:var(--success);">${euro(v.ctPrice)}</span>
+        <small style="display:block; color:var(--success); font-weight:700;">Prezzo con Conto Termico 3.0</small>`;
+    } else {
+      priceWrap.innerHTML = `<span class="price-big" id="variant-price">${(v.price != null) ? euro(v.price) : 'Su richiesta'}</span>`;
+    }
     if(v.priceNote){
       noteEl.textContent = v.priceNote;
       noteRow.style.display = 'flex';

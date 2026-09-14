@@ -22,6 +22,7 @@
      datasheetUrl  string   URL scheda tecnica PDF ufficiale (facoltativo)
      documents     array<{label,url}>   documentazione e certificazioni
      minPrice      number   calcolato: prezzo più basso tra le varianti
+     minCtPrice    number   calcolato: prezzo con Conto Termico 3.0 più basso (solo se almeno una variante lo ha)
      variantCount  number   calcolato: numero varianti
      featured      boolean  se true, compare nella sezione "Prodotti più richiesti" in Home (max 4)
      order         number
@@ -31,6 +32,7 @@
      label       string   es. "9.000 BTU"
      model       string   codice modello esatto
      price       number
+     ctPrice     number   facoltativo: prezzo già scontato dell'incentivo Conto Termico 3.0
      priceNote   string   es. "installazione esclusa"
      order       number
      active      boolean
@@ -331,7 +333,14 @@ function seriesCardHTML(s){
   const phClass = phClassFor(s);
   const img = (s.images && s.images[0]) ? s.images[0] : '';
   const imgTag = img ? `<img src="${img}" alt="${s.name}">` : '';
-  const priceLabel = (s.minPrice != null) ? `da ${euro(s.minPrice)}` : 'Prezzo su richiesta';
+  let priceHTML;
+  if (s.minCtPrice != null) {
+    priceHTML = `<span class="price">da ${euro(s.minCtPrice)}<small style="display:block;"><s>${euro(s.minPrice)}</s> · <span style="color:var(--success); font-weight:700;">Conto Termico 3.0</span></small></span>`;
+  } else if (s.minPrice != null) {
+    priceHTML = `<span class="price">da ${euro(s.minPrice)}</span>`;
+  } else {
+    priceHTML = `<span class="price">Prezzo su richiesta</span>`;
+  }
   return `
     <a class="product-card series-card" data-cat="${s.categoryId}" href="prodotto.html?id=${s.id}">
       <div class="ph ${phClass}">${imgTag}</div>
@@ -339,7 +348,7 @@ function seriesCardHTML(s){
         <span class="tag">${s.tag || ''}</span>
         <h3>${s.name}</h3>
         <p>${s.description || ''}</p>
-        <div class="price-row"><span class="price">${priceLabel}</span><span class="btn btn-outline btn-sm">Scopri</span></div>
+        <div class="price-row">${priceHTML}<span class="btn btn-outline btn-sm">Scopri</span></div>
       </div>
     </a>`;
 }

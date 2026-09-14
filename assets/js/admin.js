@@ -592,6 +592,10 @@ function renderVariantForm(seriesId, panel){
         <label style="font-size:12px;">Prezzo €</label>
         <input type="number" class="v-price" required>
       </div>
+      <div class="field" style="margin:0; width:150px;">
+        <label style="font-size:12px;">Prezzo con Conto Termico 3.0 € (facoltativo)</label>
+        <input type="number" class="v-ctPrice" placeholder="Es. 700">
+      </div>
       <div class="field" style="margin:0; flex:1; min-width:140px;">
         <label style="font-size:12px;">Nota prezzo</label>
         <input type="text" class="v-priceNote" placeholder="Es. installazione esclusa">
@@ -604,10 +608,12 @@ function renderVariantForm(seriesId, panel){
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const editingVId = form.querySelector('.v-editing-id').value;
+    const ctPriceRaw = form.querySelector('.v-ctPrice').value.trim();
     const data = {
       label: form.querySelector('.v-label').value.trim(),
       model: form.querySelector('.v-model').value.trim(),
       price: parseFloat(form.querySelector('.v-price').value) || 0,
+      ctPrice: ctPriceRaw ? parseFloat(ctPriceRaw) : null,
       priceNote: form.querySelector('.v-priceNote').value.trim(),
       active: true
     };
@@ -650,7 +656,7 @@ async function loadVariantsAdmin(seriesId){
     <div class="admin-row" data-vid="${v.id}" style="padding:10px 14px;">
       <div class="admin-row-info">
         <b>${v.label} — ${v.model}</b>
-        <span>${euroFmt(v.price)} ${v.priceNote ? '· ' + v.priceNote : ''} ${v.active === false ? '· <em>Nascosta</em>' : ''}</span>
+        <span>${euroFmt(v.price)} ${v.ctPrice != null ? `· <b style="color:var(--success);">${euroFmt(v.ctPrice)} con CT 3.0</b>` : ''} ${v.priceNote ? '· ' + v.priceNote : ''} ${v.active === false ? '· <em>Nascosta</em>' : ''}</span>
       </div>
       <div class="admin-row-actions">
         <button type="button" class="btn btn-outline btn-sm" onclick="editVariant('${seriesId}','${v.id}')">Modifica</button>
@@ -670,6 +676,7 @@ async function editVariant(seriesId, variantId){
   form.querySelector('.v-label').value = v.label || '';
   form.querySelector('.v-model').value = v.model || '';
   form.querySelector('.v-price').value = v.price != null ? v.price : '';
+  form.querySelector('.v-ctPrice').value = v.ctPrice != null ? v.ctPrice : '';
   form.querySelector('.v-priceNote').value = v.priceNote || '';
   form.querySelector('.v-submit-btn').textContent = 'Salva modifiche';
   panel.querySelector('.v-cancel-btn').style.display = '';
@@ -696,8 +703,10 @@ async function recomputeSeriesAggregates(seriesId){
   snap.forEach(v => variants.push({ id: v.id, ...v.data() }));
   const activeVariants = variants.filter(v => v.active !== false);
   const prices = activeVariants.map(v => v.price).filter(p => p != null);
+  const ctPrices = activeVariants.map(v => v.ctPrice).filter(p => p != null);
   await seriesRef.update({
     minPrice: prices.length ? Math.min(...prices) : null,
+    minCtPrice: ctPrices.length ? Math.min(...ctPrices) : null,
     variantCount: activeVariants.length
   });
   await refreshSeriesRowSummary(seriesId);
