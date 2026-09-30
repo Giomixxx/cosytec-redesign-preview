@@ -178,7 +178,13 @@ async function renderProductDetailPage(){
   const { series, variants } = result;
   const phClass = phClassFor(series);
 
-  document.title = `${series.name} — Cosytec`;
+  document.title = `${series.name} — Climatizzazione a Bagheria e Palermo | Cosytec`;
+  const metaDesc = document.getElementById('detail-meta-description');
+  if(metaDesc){
+    const base = series.longDescription || series.description || '';
+    const snippet = (base ? base.slice(0, 110).trim() : `${series.name}: scopri caratteristiche e prezzo`).replace(/[.\s]+$/, '');
+    metaDesc.setAttribute('content', `${snippet}. Vendita e installazione a Bagheria, Palermo, Ficarazzi e Carini con Cosytec.`);
+  }
   titleEl.textContent = series.name;
   if(breadcrumb){
     breadcrumb.innerHTML = `<a href="index.html">Home</a> / <a href="prodotti.html">Prodotti</a> / ${series.name}`;
