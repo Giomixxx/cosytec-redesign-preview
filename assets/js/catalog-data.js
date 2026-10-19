@@ -354,7 +354,7 @@ function seriesCardHTML(s){
 }
 
 async function renderProdottiPage(){
-  const [categories, seriesAll] = await Promise.all([fetchCategories(), fetchAllSeries()]);
+  const [categories, seriesAll, offersAll] = await Promise.all([fetchCategories(), fetchAllSeries(), fetchActiveOffers()]);
   const tabbar = document.getElementById('category-tabbar');
   const panelsWrap = document.getElementById('category-panels');
   if (!tabbar || !panelsWrap) return;
@@ -365,10 +365,12 @@ async function renderProdottiPage(){
 
   panelsWrap.innerHTML = categories.map((c, i) => {
     const items = seriesAll.filter(s => s.categoryId === c.id);
+    const offers = offersAll.filter(o => o.categoryId === c.id);
+    const cards = offers.map(o => offerCardHTML(o, { alwaysBadge: true })).join('') + items.map(seriesCardHTML).join('');
     return `
       <div class="tab-panel ${i === 0 ? 'active' : ''}" id="cat-${c.id}">
         <div class="grid grid-3">
-          ${items.map(seriesCardHTML).join('') || '<p style="color:var(--ink-300);">Nessun modello disponibile al momento in questa categoria.</p>'}
+          ${cards || '<p style="color:var(--ink-300);">Nessun modello disponibile al momento in questa categoria.</p>'}
         </div>
       </div>`;
   }).join('');
@@ -421,14 +423,15 @@ async function fetchActiveOffers(){
   }
 }
 
-function offerCardHTML(o){
+function offerCardHTML(o, opts){
   const safeLink = o.linkUrl && (/^https?:\/\//i.test(o.linkUrl) || /^[\w\-./?=&#]+$/.test(o.linkUrl)) ? o.linkUrl : '';
   const link = safeLink || `https://wa.me/393272326589?text=${encodeURIComponent("Ciao, vorrei informazioni sull'offerta: " + o.title)}`;
   const external = /^https?:\/\//i.test(link);
   const media = o.imageUrl
     ? `<div class="ph ${(o.imageStyle ? o.imageStyle === 'white' : /\.png(\?|$)/i.test(o.imageUrl)) ? 'ph-white' : 'ph-cover'}"><img src="${escapeHTML(o.imageUrl)}" alt="${escapeHTML(o.title)}"></div>`
     : `<div class="ph ph-warm"><i class="fa-solid fa-fire"></i></div>`;
-  const badge = o.badge ? `<span class="offer-badge">${escapeHTML(o.badge)}</span>` : '';
+  const badgeText = o.badge || (opts && opts.alwaysBadge ? 'Offerta' : '');
+  const badge = badgeText ? `<span class="offer-badge">${escapeHTML(badgeText)}</span>` : '';
   const note = o.priceNote ? escapeHTML(o.priceNote) : '';
   let priceHTML = '';
   if (o.price != null) {

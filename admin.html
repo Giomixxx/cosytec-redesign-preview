@@ -261,7 +261,7 @@
     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
       <h3 style="margin:0;">Modelli pubblicati</h3>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        <button id="import-pdf-products-btn" class="btn btn-outline btn-sm">Importa pompe di calore e fotovoltaico</button>
+        <button id="import-pdf-products-btn" class="btn btn-outline btn-sm">Importa nuovi modelli (pompe di calore, fotovoltaico, caldaia, solare)</button>
         <button id="seed-btn" class="btn btn-outline btn-sm">Importa catalogo di esempio</button>
       </div>
     </div>
@@ -310,6 +310,13 @@
           <div class="field">
             <label>Link (facoltativo)</label>
             <input type="url" id="o-linkUrl" placeholder="https://cosytec.it/prodotto.html?id=... — se vuoto, la card apre WhatsApp con un messaggio già scritto">
+          </div>
+          <div class="field">
+            <label>Mostra anche nella sezione Prodotti</label>
+            <select id="o-categoryId">
+              <option value="">Solo in Home</option>
+            </select>
+            <p style="margin:6px 0 0; font-size:12.5px; color:var(--ink-300);">Scegli una categoria (es. Climatizzatori) per far comparire l'offerta anche in quella sezione della pagina Prodotti, in cima alle card. In Home compare sempre.</p>
           </div>
           <div class="field">
             <label>Immagine (facoltativa)</label>
@@ -404,8 +411,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=3"></script>
-<script src="assets/js/catalog-data.js?v=8"></script>
+<script src="assets/js/catalog-data.js?v=9"></script>
 <script src="assets/js/product-detail.js?v=4"></script>
-<script src="assets/js/admin.js?v=21"></script>
+<script src="assets/js/admin.js?v=22"></script>
 </body>
 </html>

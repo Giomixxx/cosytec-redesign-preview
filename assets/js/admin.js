@@ -765,7 +765,16 @@ function offerRulesError(err){
     : (err && err.message) || 'Errore sconosciuto.';
 }
 
+function fillOfferCategorySelect(){
+  const sel = document.getElementById('o-categoryId');
+  const current = sel.value;
+  sel.innerHTML = '<option value="">Solo in Home</option>' +
+    cachedCategories.map(c => `<option value="${c.id}">${escapeHTML(c.name)}</option>`).join('');
+  sel.value = current;
+}
+
 async function loadOffersAdmin(){
+  fillOfferCategorySelect();
   const listEl = document.getElementById('offers-list');
   listEl.innerHTML = '<p style="color:var(--ink-300);">Caricamento...</p>';
   try {
@@ -783,8 +792,10 @@ async function loadOffersAdmin(){
       ? '<small class="badge-default">Disattivata</small>'
       : expired ? '<small class="badge-default">Scaduta</small>' : '<small class="badge-custom">Visibile in Home</small>';
     const thumb = o.imageUrl ? `<img src="${escapeHTML(o.imageUrl)}" alt="">` : '<div class="slot-placeholder"><i class="fa-solid fa-fire"></i></div>';
+    const catName = (cachedCategories.find(c => c.id === o.categoryId) || {}).name;
     const meta = [
       o.price != null ? euroFmt(o.price) : '',
+      catName ? 'anche in ' + catName : '',
       o.expiresAt ? 'fino al ' + o.expiresAt.split('-').reverse().join('/') : 'senza scadenza'
     ].filter(Boolean).join(' · ');
     return `
@@ -816,6 +827,8 @@ function editOffer(id){
   document.getElementById('o-priceNote').value = o.priceNote || '';
   document.getElementById('o-linkUrl').value = o.linkUrl || '';
   document.getElementById('o-order').value = o.order != null ? o.order : '';
+  fillOfferCategorySelect();
+  document.getElementById('o-categoryId').value = o.categoryId || '';
   document.getElementById('o-active').checked = o.active !== false;
   setOfferImage(o.imageUrl || '');
   document.getElementById('offer-form-title').textContent = 'Modifica offerta';
@@ -925,11 +938,51 @@ const PDF_PRODUCTS = [
       { label: '10 kW trifase + accumulo 15 kWh', model: '22 moduli 455 W + inverter ZOOM 10 kW + batteria 14,3 kWh' },
       { label: '20 kW trifase + accumulo 20 kWh', model: '44 moduli 455 W + inverter ZOOM 20 kW + 2 batterie 10,24 kWh' }
     ]
+  },
+  {
+    id: 'fondital-tenerife-next', categoryName: 'Caldaia', brandName: 'Fondital', order: 1,
+    name: 'Fondital Tenerife Next',
+    description: 'Caldaia murale a condensazione di ultima generazione, compatta e compatibile con miscele di idrogeno fino al 20%.',
+    longDescription: 'Tenerife Next è la caldaia murale a condensazione Fondital con produzione istantanea di acqua calda sanitaria. Alta efficienza energetica (classe A), modulazione 1:8 per il massimo comfort e scambiatore primario in acciaio inox.\n\nÈ compatibile con miscele metano-idrogeno fino al 20%, ha dimensioni compatte (solo 250 mm di profondità) e un pannello comandi digitale intuitivo.\n\nL\'offerta comprende fornitura e installazione chiavi in mano: lavaggio dell\'impianto termico, kit salvacaldaia, rilascio del libretto d\'impianto, registrazione al Catasto Termico e collaudo finale a regola d\'arte, con assistenza tecnica garantita. Pagamento anche in comode rate.',
+    features: [
+      'Caldaia a condensazione, alta efficienza energetica (classe A)',
+      'Compatibile con miscele di idrogeno fino al 20%',
+      'Modulazione 1:8 per il massimo comfort',
+      'Scambiatore primario in acciaio inox',
+      'Dimensioni compatte: solo 250 mm di profondità',
+      'Pannello comandi digitale intuitivo',
+      'Installazione, libretto d\'impianto e Catasto Termico inclusi nell\'offerta'
+    ],
+    images: ['https://cosytec.it/assets/img/offerte/caldaia-fondital-tenerife.png'],
+    datasheetUrl: 'https://www.fondital.com/downloads/11071/6725/BROCHURE-TENERIFE-NEXT-IT.pdf',
+    variants: [
+      { label: '24 kW', model: 'Tenerife Next 24 kW', price: 1199, priceNote: 'Fornitura e installazione, IVA inclusa' }
+    ]
+  },
+  {
+    id: 'fondital-sulpack-natural-fpm', categoryName: 'Solare Termico', brandName: 'Fondital', order: 1,
+    name: 'Fondital Sulpack Natural FPM',
+    description: 'Sistema solare termico a circolazione naturale con boiler da 300 litri e 2 collettori solari: l\'acqua calda la produce il sole.',
+    longDescription: 'Sulpack Natural FPM è il sistema solare termico a circolazione naturale di Fondital: energia rinnovabile, risparmio in bolletta e comfort tutto l\'anno, con integrazione della caldaia quando serve.\n\nIl kit comprende il bollitore da 300 litri (volume utile circa 289 litri), 2 collettori solari FPM 27, la resistenza elettrica ausiliaria da 2.000 W e il doppio anodo di magnesio con i dispositivi di sicurezza.\n\nL\'offerta comprende fornitura e installazione, ed è prevista con l\'incentivo del Conto Termico.',
+    features: [
+      'Boiler WHPS BI 300 da 300 litri (volume utile circa 289 litri)',
+      '2 collettori solari FPM 27',
+      'Resistenza elettrica ausiliaria da 2.000 W',
+      'Doppio anodo di magnesio e dispositivi di sicurezza',
+      'Integrabile con la caldaia quando serve',
+      'Tecnologia italiana Fondital'
+    ],
+    images: ['https://cosytec.it/assets/img/offerte/solare-termico-300.png'],
+    datasheetUrl: '',
+    documents: [{ label: 'Manuale di installazione pacchetto circolazione naturale FPM 27 - 300 litri', url: 'https://www.fondital.com/downloads/10901/6604/IST-PACCHETTO-CIRCOLAZIONE-NATURALE-FPM27-300-IT.pdf' }],
+    variants: [
+      { label: 'Boiler 300 litri + 2 collettori', model: 'Sulpack Natural FPM 300 litri', price: 600, priceNote: 'Fornitura e installazione, con incentivo Conto Termico' }
+    ]
   }
 ];
 
 async function importPdfProducts(){
-  if (!confirm('Importare i modelli dai cataloghi PDF?\n\n• Pompe di calore Stelbi WØRM (nuova categoria "Pompe di calore")\n• UcanPower UHome\n• Impianto fotovoltaico Stelbi con accumulo\n\nSenza prezzi (Su richiesta), con le schede tecniche PDF collegate. I modelli già presenti non vengono toccati.')) return;
+  if (!confirm('Importare i nuovi modelli?\n\n• Pompe di calore Stelbi WØRM (nuova categoria "Pompe di calore")\n• UcanPower UHome\n• Impianto fotovoltaico Stelbi con accumulo\n• Caldaia Fondital Tenerife Next\n• Solare termico Fondital Sulpack Natural FPM\n\nCon le schede tecniche collegate. I modelli già presenti non vengono toccati.')) return;
   const btn = document.getElementById('import-pdf-products-btn');
   btn.disabled = true;
   const created = [], skipped = [];
@@ -960,7 +1013,7 @@ async function importPdfProducts(){
       await seriesRef.set({
         categoryId: cat.id, tag: p.brandName, name: p.name, description: p.description,
         longDescription: p.longDescription, features: p.features, images: p.images,
-        imageStyle: 'white', accent: '', datasheetUrl: p.datasheetUrl, documents: [],
+        imageStyle: 'white', accent: '', datasheetUrl: p.datasheetUrl, documents: p.documents || [],
         minPrice: prices.length ? Math.min(...prices) : null, minCtPrice: null,
         variantCount: p.variants.length, featured: false, order: p.order, active: true,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -989,35 +1042,35 @@ async function importPdfProducts(){
 
 const SEED_OFFERS = [
   {
-    id: 'daikin-sensira-9000',
+    id: 'daikin-sensira-9000', categoryName: 'Climatizzatori',
     title: 'Daikin Sensira 9000 BTU',
     description: 'Climatizzatore Daikin in classe A++, installazione compresa.',
     badge: 'Bonus climatizzazione', price: 649, oldPrice: null, priceNote: 'installazione compresa',
     imageUrl: 'assets/img/daikin-sensira.png', order: 1
   },
   {
-    id: 'daikin-sensira-12000',
+    id: 'daikin-sensira-12000', categoryName: 'Climatizzatori',
     title: 'Daikin Sensira 12000 BTU',
     description: 'Climatizzatore Daikin in classe A++, installazione compresa.',
     badge: 'Bonus climatizzazione', price: 699, oldPrice: null, priceNote: 'installazione compresa',
     imageUrl: 'assets/img/daikin-sensira.png', order: 2
   },
   {
-    id: 'solare-termico-300',
+    id: 'solare-termico-300', categoryName: 'Solare Termico',
     title: 'Solare termico a circolazione naturale 300 litri',
     description: 'Boiler da 300 litri con 2 collettori solari, fornitura e installazione incluse.',
     badge: 'Con Conto Termico', price: 600, oldPrice: null, priceNote: 'installazione inclusa',
     imageUrl: 'assets/img/offerte/solare-termico-300.png', order: 3
   },
   {
-    id: 'fotovoltaico-stelbi-6kw',
+    id: 'fotovoltaico-stelbi-6kw', categoryName: 'Fotovoltaico',
     title: 'Impianto fotovoltaico Stelbi 6 kW con accumulo 10 kW',
     description: 'Fornitura e installazione chiavi in mano, con gestione di tutte le pratiche e allaccio Enel.',
     badge: 'Pratiche incluse', price: 8499, oldPrice: null, priceNote: 'IVA inclusa',
     imageUrl: 'assets/img/offerte/fotovoltaico-stelbi.jpg', imageStyle: 'white', order: 4
   },
   {
-    id: 'caldaia-fondital-tenerife-24kw',
+    id: 'caldaia-fondital-tenerife-24kw', categoryName: 'Caldaia',
     title: 'Caldaia Fondital Tenerife 24 kW',
     description: 'Fornitura e installazione, registrazione al Catasto Termico e rilascio del libretto d\'impianto.',
     badge: 'Anche a rate', price: 1199, oldPrice: null, priceNote: 'IVA inclusa',
@@ -1026,11 +1079,22 @@ const SEED_OFFERS = [
 ];
 
 async function importSeedOffers(){
-  if (!confirm('Importare le 5 offerte delle locandine (2 climatizzatori Daikin, solare termico, fotovoltaico, caldaia)? Se le hai già importate verranno solo riscritte, non duplicate.')) return;
+  if (!confirm('Importare le 5 offerte delle locandine (2 climatizzatori Daikin, solare termico, fotovoltaico, caldaia)? Quelle già presenti non vengono modificate: viene solo collegata la loro sezione nella pagina Prodotti.')) return;
   try {
-    for (const { id, ...o } of SEED_OFFERS) {
-      await db.collection('offers').doc(id).set({
-        ...o, linkUrl: '', expiresAt: null, active: true,
+    const catSnap = await db.collection('categories').get();
+    const cats = [];
+    catSnap.forEach(d => cats.push({ id: d.id, ...d.data() }));
+    for (const { id, categoryName, ...o } of SEED_OFFERS) {
+      const ref = db.collection('offers').doc(id);
+      const cat = cats.find(c => c.name === categoryName);
+      const categoryId = cat ? cat.id : null;
+      const existing = await ref.get();
+      if (existing.exists) {
+        if (existing.data().categoryId == null && categoryId) await ref.update({ categoryId });
+        continue;
+      }
+      await ref.set({
+        ...o, categoryId, linkUrl: '', expiresAt: null, active: true,
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       });
     }
@@ -1077,6 +1141,7 @@ function initOffersForm(){
       price: num('o-price'),
       oldPrice: num('o-oldPrice'),
       imageUrl: offerImageData,
+      categoryId: document.getElementById('o-categoryId').value || null,
       order: parseInt(document.getElementById('o-order').value) || 0,
       active: document.getElementById('o-active').checked,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
