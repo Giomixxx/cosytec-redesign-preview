@@ -30,7 +30,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="icon" href="assets/img/favicon-32.png">
-<link rel="stylesheet" href="assets/css/style.css?v=10">
+<link rel="stylesheet" href="assets/css/style.css?v=11">
 </head>
 <body data-page="home">
 
@@ -164,6 +164,18 @@
       <div class="reveal"><b>1997</b><span>Anno di fondazione del gruppo</span></div>
       <div class="reveal"><b>3.400+</b><span>Interventi completati</span></div>
     </div>
+  </div>
+</section>
+
+<!-- OFFERTE DEL MOMENTO (compare solo se ci sono offerte attive) -->
+<section id="offers-section" style="display:none;">
+  <div class="container">
+    <div class="section-head center reveal">
+      <span class="eyebrow"><i class="fa-solid fa-fire"></i> Offerte del momento</span>
+      <h2>Approfitta delle nostre offerte</h2>
+      <p>Promozioni a tempo limitato su climatizzatori, caldaie e impianti. Contattaci per verificarne la disponibilità.</p>
+    </div>
+    <div class="offers-grid" id="offers-grid"></div>
   </div>
 </section>
 
@@ -304,9 +316,9 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=3"></script>
-<script src="assets/js/catalog-data.js?v=5"></script>
+<script src="assets/js/catalog-data.js?v=8"></script>
 <script src="assets/js/site-images.js?v=1"></script>
 <script src="assets/js/main.js?v=6"></script>
-<script>renderFeaturedHome();</script>
+<script>renderOffersHome(); renderFeaturedHome();</script>
 </body>
 </html>

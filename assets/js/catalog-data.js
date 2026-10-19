@@ -392,6 +392,79 @@ async function renderShopPage(){
   if (typeof initReveal === 'function') initReveal();
 }
 
+/* ===========================================================
+   Offerte del momento (collezione Firestore "offers")
+   Campi: title, description, badge, price, oldPrice, priceNote,
+   imageUrl, linkUrl, expiresAt (YYYY-MM-DD), order, active
+   =========================================================== */
+
+function escapeHTML(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function offerIsLive(o){
+  if (o.active === false) return false;
+  if (o.expiresAt && new Date(o.expiresAt + 'T23:59:59') < new Date()) return false;
+  return true;
+}
+
+async function fetchActiveOffers(){
+  if (!db) return [];
+  try {
+    const snap = await db.collection('offers').get();
+    const list = [];
+    snap.forEach(d => list.push({ id: d.id, ...d.data() }));
+    return list.filter(offerIsLive).sort((a, b) => (a.order || 0) - (b.order || 0));
+  } catch (err) {
+    console.warn('Offerte non disponibili.', err);
+    return [];
+  }
+}
+
+function offerCardHTML(o){
+  const safeLink = o.linkUrl && (/^https?:\/\//i.test(o.linkUrl) || /^[\w\-./?=&#]+$/.test(o.linkUrl)) ? o.linkUrl : '';
+  const link = safeLink || `https://wa.me/393272326589?text=${encodeURIComponent("Ciao, vorrei informazioni sull'offerta: " + o.title)}`;
+  const external = /^https?:\/\//i.test(link);
+  const media = o.imageUrl
+    ? `<div class="ph ${(o.imageStyle ? o.imageStyle === 'white' : /\.png(\?|$)/i.test(o.imageUrl)) ? 'ph-white' : 'ph-cover'}"><img src="${escapeHTML(o.imageUrl)}" alt="${escapeHTML(o.title)}"></div>`
+    : `<div class="ph ph-warm"><i class="fa-solid fa-fire"></i></div>`;
+  const badge = o.badge ? `<span class="offer-badge">${escapeHTML(o.badge)}</span>` : '';
+  const note = o.priceNote ? escapeHTML(o.priceNote) : '';
+  let priceHTML = '';
+  if (o.price != null) {
+    const sub = [o.oldPrice != null ? `<s>${euro(o.oldPrice)}</s>` : '', note].filter(Boolean).join(' · ');
+    priceHTML = `<span class="price">${euro(o.price)}${sub ? `<small style="display:block;">${sub}</small>` : ''}</span>`;
+  } else if (note) {
+    priceHTML = `<span class="price"><small>${note}</small></span>`;
+  }
+  let expiry = '';
+  if (o.expiresAt) {
+    const [y, m, d] = o.expiresAt.split('-');
+    expiry = `<span class="offer-expiry"><i class="fa-regular fa-clock"></i> Valida fino al ${d}/${m}/${y}</span>`;
+  }
+  return `
+    <a class="product-card offer-card" href="${escapeHTML(link)}"${external ? ' target="_blank" rel="noopener"' : ''}>
+      <div style="position:relative;">${media}${badge}</div>
+      <div class="body">
+        <h3>${escapeHTML(o.title)}</h3>
+        ${o.description ? `<p>${escapeHTML(o.description)}</p>` : ''}
+        ${expiry}
+        <div class="price-row">${priceHTML}<span class="btn btn-primary btn-sm">Approfitta</span></div>
+      </div>
+    </a>`;
+}
+
+async function renderOffersHome(){
+  const section = document.getElementById('offers-section');
+  const grid = document.getElementById('offers-grid');
+  if (!section || !grid) return;
+  const offers = await fetchActiveOffers();
+  if (!offers.length) return;
+  grid.innerHTML = offers.map(offerCardHTML).join('');
+  section.style.display = '';
+  if (typeof initReveal === 'function') initReveal();
+}
+
 async function renderFeaturedHome(){
   const grid = document.getElementById('featured-products-grid');
   if (!grid) return;

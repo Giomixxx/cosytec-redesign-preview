@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="icon" href="assets/img/favicon-32.png">
-<link rel="stylesheet" href="assets/css/style.css?v=10">
+<link rel="stylesheet" href="assets/css/style.css?v=11">
 <style>
   body{ background:var(--paper-100); }
   .admin-wrap{ max-width:900px; margin:0 auto; padding:50px 24px 100px; }
@@ -111,6 +111,7 @@
 
     <div class="tabbar" style="margin-bottom:30px;">
       <button class="active" data-panel="panel-products">Catalogo</button>
+      <button data-panel="panel-offers">Offerte</button>
       <button data-panel="panel-images">Immagini sito</button>
       <button data-panel="panel-users" id="tab-users-btn" style="display:none;">Utenti</button>
     </div>
@@ -259,11 +260,89 @@
 
     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
       <h3 style="margin:0;">Modelli pubblicati</h3>
-      <button id="seed-btn" class="btn btn-outline btn-sm">Importa catalogo di esempio</button>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button id="import-pdf-products-btn" class="btn btn-outline btn-sm">Importa pompe di calore e fotovoltaico</button>
+        <button id="seed-btn" class="btn btn-outline btn-sm">Importa catalogo di esempio</button>
+      </div>
     </div>
     <div id="series-list"></div>
 
     </div>
+    </div>
+
+    <div id="panel-offers" class="admin-panel" style="display:none;">
+      <div class="card-panel" style="margin-bottom:24px;">
+        <h3 id="offer-form-title" style="margin-bottom:6px;">Nuova offerta</h3>
+        <p style="margin-bottom:20px;">Le offerte attive compaiono nella Home, nella sezione "Offerte del momento". Se imposti una data di scadenza, l'offerta sparisce da sola dopo quel giorno. Senza offerte attive la sezione non viene mostrata.</p>
+        <form id="offer-form">
+          <div class="field">
+            <label>Titolo offerta</label>
+            <input type="text" id="o-title" placeholder="Es. Climatizzatore Daikin Perfera 12000 BTU" required>
+          </div>
+          <div class="field">
+            <label>Descrizione breve (facoltativa)</label>
+            <textarea id="o-description" rows="2" placeholder="Es. Installazione inclusa, garanzia ufficiale 3 anni"></textarea>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Etichetta in evidenza (facoltativa)</label>
+              <input type="text" id="o-badge" placeholder="Es. -20% oppure Solo questo mese">
+            </div>
+            <div class="field">
+              <label>Valida fino al (facoltativa)</label>
+              <input type="date" id="o-expiresAt">
+            </div>
+          </div>
+          <div class="field-row-3">
+            <div class="field">
+              <label>Prezzo offerta in € (facoltativo)</label>
+              <input type="number" id="o-price" min="0" step="1" placeholder="Es. 699">
+            </div>
+            <div class="field">
+              <label>Prezzo di listino in € (barrato)</label>
+              <input type="number" id="o-oldPrice" min="0" step="1" placeholder="Es. 899">
+            </div>
+            <div class="field">
+              <label>Nota sotto il prezzo (facoltativa)</label>
+              <input type="text" id="o-priceNote" placeholder="Es. installazione inclusa">
+            </div>
+          </div>
+          <div class="field">
+            <label>Link (facoltativo)</label>
+            <input type="url" id="o-linkUrl" placeholder="https://cosytec.it/prodotto.html?id=... — se vuoto, la card apre WhatsApp con un messaggio già scritto">
+          </div>
+          <div class="field">
+            <label>Immagine (facoltativa)</label>
+            <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+              <img id="o-image-preview" alt="" style="display:none; width:96px; height:72px; object-fit:cover; border-radius:10px; background:var(--paper-50);">
+              <label class="upload-label" style="margin:0;">
+                <i class="fa-solid fa-upload"></i><span>Carica da PC</span>
+                <input type="file" id="o-image-file" accept="image/jpeg,image/png,image/webp" hidden>
+              </label>
+              <button type="button" id="o-image-remove" class="btn btn-outline btn-sm" style="display:none;">Rimuovi immagine</button>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Ordine di visualizzazione</label>
+              <input type="number" id="o-order" placeholder="Es. 1">
+            </div>
+            <div class="checkbox-row" style="align-self:end; margin-bottom:20px;">
+              <input type="checkbox" id="o-active" checked>
+              <label for="o-active" style="margin:0; font-weight:600; color:var(--ink-800);">Offerta attiva (visibile in Home)</label>
+            </div>
+          </div>
+          <div class="flex gap-10">
+            <button type="submit" id="offer-submit-btn" class="btn btn-primary">Aggiungi offerta</button>
+            <button type="button" id="offer-cancel-btn" class="btn btn-outline" style="display:none;">Annulla modifica</button>
+          </div>
+        </form>
+      </div>
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; gap:12px; flex-wrap:wrap;">
+        <h3 style="margin:0;">Offerte salvate</h3>
+        <button type="button" id="import-offers-btn" class="btn btn-outline btn-sm">Importa le offerte delle locandine</button>
+      </div>
+      <div id="offers-list"></div>
     </div>
 
     <div id="panel-images" class="admin-panel" style="display:none;">
@@ -325,8 +404,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
 <script src="assets/js/firebase-config.js?v=3"></script>
-<script src="assets/js/catalog-data.js?v=5"></script>
+<script src="assets/js/catalog-data.js?v=8"></script>
 <script src="assets/js/product-detail.js?v=4"></script>
-<script src="assets/js/admin.js?v=16"></script>
+<script src="assets/js/admin.js?v=21"></script>
 </body>
 </html>

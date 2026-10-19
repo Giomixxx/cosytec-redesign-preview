@@ -733,6 +733,369 @@ const IMAGE_SLOTS = {
   }))
 };
 
+/* ===========================================================
+   Offerte del momento
+   =========================================================== */
+
+let cachedOffers = [];
+let editingOfferId = null;
+let offerImageData = '';
+
+function setOfferImage(url){
+  offerImageData = url || '';
+  const prev = document.getElementById('o-image-preview');
+  prev.src = offerImageData;
+  prev.style.display = offerImageData ? '' : 'none';
+  document.getElementById('o-image-remove').style.display = offerImageData ? '' : 'none';
+}
+
+function resetOfferForm(){
+  editingOfferId = null;
+  document.getElementById('offer-form').reset();
+  document.getElementById('o-active').checked = true;
+  setOfferImage('');
+  document.getElementById('offer-form-title').textContent = 'Nuova offerta';
+  document.getElementById('offer-submit-btn').textContent = 'Aggiungi offerta';
+  document.getElementById('offer-cancel-btn').style.display = 'none';
+}
+
+function offerRulesError(err){
+  return err && err.code === 'permission-denied'
+    ? 'Permesso negato da Firebase: per usare le Offerte vanno aggiornate le regole di sicurezza Firestore (collezione "offers").'
+    : (err && err.message) || 'Errore sconosciuto.';
+}
+
+async function loadOffersAdmin(){
+  const listEl = document.getElementById('offers-list');
+  listEl.innerHTML = '<p style="color:var(--ink-300);">Caricamento...</p>';
+  try {
+    const snap = await db.collection('offers').get();
+    cachedOffers = [];
+    snap.forEach(d => cachedOffers.push({ id: d.id, ...d.data() }));
+  } catch (err) {
+    listEl.innerHTML = `<p style="color:#e0413c;">${escapeHTML(offerRulesError(err))}</p>`;
+    return;
+  }
+  cachedOffers.sort((a, b) => (a.order || 0) - (b.order || 0));
+  listEl.innerHTML = cachedOffers.length ? cachedOffers.map(o => {
+    const expired = o.expiresAt && new Date(o.expiresAt + 'T23:59:59') < new Date();
+    const status = o.active === false
+      ? '<small class="badge-default">Disattivata</small>'
+      : expired ? '<small class="badge-default">Scaduta</small>' : '<small class="badge-custom">Visibile in Home</small>';
+    const thumb = o.imageUrl ? `<img src="${escapeHTML(o.imageUrl)}" alt="">` : '<div class="slot-placeholder"><i class="fa-solid fa-fire"></i></div>';
+    const meta = [
+      o.price != null ? euroFmt(o.price) : '',
+      o.expiresAt ? 'fino al ' + o.expiresAt.split('-').reverse().join('/') : 'senza scadenza'
+    ].filter(Boolean).join(' · ');
+    return `
+      <div class="admin-row">
+        ${thumb}
+        <div class="admin-row-info">
+          <b>${escapeHTML(o.title)}</b>
+          <span>${meta}</span><br>${status}
+        </div>
+        <div class="admin-row-actions">
+          <button type="button" class="btn btn-outline btn-sm" onclick="editOffer('${o.id}')">Modifica</button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="toggleOfferActive('${o.id}', ${o.active === false})">${o.active === false ? 'Attiva' : 'Disattiva'}</button>
+          <button type="button" class="btn btn-sm" style="background:#e0413c;color:#fff;" onclick="deleteOffer('${o.id}')">Elimina</button>
+        </div>
+      </div>`;
+  }).join('') : '<p style="color:var(--ink-300);">Nessuna offerta ancora. Creane una dal form qui sopra.</p>';
+}
+
+function editOffer(id){
+  const o = cachedOffers.find(x => x.id === id);
+  if (!o) return;
+  editingOfferId = id;
+  document.getElementById('o-title').value = o.title || '';
+  document.getElementById('o-description').value = o.description || '';
+  document.getElementById('o-badge').value = o.badge || '';
+  document.getElementById('o-expiresAt').value = o.expiresAt || '';
+  document.getElementById('o-price').value = o.price != null ? o.price : '';
+  document.getElementById('o-oldPrice').value = o.oldPrice != null ? o.oldPrice : '';
+  document.getElementById('o-priceNote').value = o.priceNote || '';
+  document.getElementById('o-linkUrl').value = o.linkUrl || '';
+  document.getElementById('o-order').value = o.order != null ? o.order : '';
+  document.getElementById('o-active').checked = o.active !== false;
+  setOfferImage(o.imageUrl || '');
+  document.getElementById('offer-form-title').textContent = 'Modifica offerta';
+  document.getElementById('offer-submit-btn').textContent = 'Salva modifiche';
+  document.getElementById('offer-cancel-btn').style.display = '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function toggleOfferActive(id, newState){
+  try {
+    await db.collection('offers').doc(id).update({ active: newState });
+    loadOffersAdmin();
+  } catch (err) {
+    alert('Operazione non riuscita: ' + offerRulesError(err));
+  }
+}
+
+async function deleteOffer(id){
+  if (!confirm('Eliminare definitivamente questa offerta?')) return;
+  try {
+    await db.collection('offers').doc(id).delete();
+    if (editingOfferId === id) resetOfferForm();
+    loadOffersAdmin();
+  } catch (err) {
+    alert('Eliminazione non riuscita: ' + offerRulesError(err));
+  }
+}
+
+/* ===========================================================
+   Importazione modelli dai cataloghi PDF (Stelbi, UcanPower)
+   I prezzi sono volutamente assenti ("Su richiesta"): i listini
+   dei produttori sono riservati ai rivenditori.
+   =========================================================== */
+
+const PDF_PRODUCTS = [
+  {
+    id: 'stelbi-worm-hp290', categoryName: 'Pompe di calore', brandName: 'Stelbi', order: 1,
+    name: 'Stelbi WØRM HP290',
+    description: 'Pompa di calore aria/acqua monoblocco con refrigerante naturale R290, prodotta in Italia: riscalda, raffresca e produce acqua calda sanitaria.',
+    longDescription: 'La pompa di calore monoblocco aria/acqua WØRM è progettata, prodotta e testata nello stabilimento Stelbi di Cuneo. Compatta, si installa facilmente anche in spazi ridotti e nelle sostituzioni di impianti esistenti, e si integra con le caldaie Stelbi Prime e Primus per realizzare sistemi ibridi.\n\nLa gamma è divisa in tre taglie: Small da 5 e 7 kW monofase, Medium da 9 kW monofase, Large da 12 e 15 kW monofase e trifase. Di serie ha l\'interfaccia touch-screen, con temperature di mandata che superano i 70 °C, la gestione delle valvole deviatrici e dei circolatori lato secondario e la funzione anti-legionella sul sanitario.\n\nPuò essere collegata in cascata con un kit dedicato e controllata da App via Wi-Fi (gateway dedicato), insieme a un massimo di 15 fancoil della serie LINEAR SLIM. Compressore, motore ventola e circolatore sono Panasonic.',
+    features: [
+      'Refrigerante naturale R290, classe energetica fino ad A+++',
+      'Acqua calda fino a 75 °C, funzionamento in riscaldamento da -25 a +47 °C esterni',
+      'Compressore Panasonic DC inverter twin-rotary',
+      'Touch-screen di serie, predisposizione Wi-Fi e protocollo Modbus',
+      'Collegabile in cascata e integrabile con caldaie Stelbi (sistema ibrido)',
+      'Gestione anti-legionella sull\'acqua calda sanitaria',
+      'Pensata per il Conto Termico 3.0: verifica i requisiti con noi',
+      'Prodotta in Italia, nello stabilimento Stelbi di Cuneo'
+    ],
+    images: ['https://cosytec.it/assets/img/prodotti/stelbi-worm-hp290.png', 'https://cosytec.it/assets/img/prodotti/stelbi-worm-hp290-ambiente.jpg', 'https://cosytec.it/assets/img/prodotti/stelbi-worm-hp290-display.png'],
+    datasheetUrl: 'https://cosytec.it/assets/docs/stelbi-worm-hp290-scheda-tecnica.pdf',
+    variants: [
+      { label: '5 kW monofase', model: 'WØRM HP290/5M', priceNote: 'Resa 5,11 kW, COP 5,23 (A7/W35)' },
+      { label: '7 kW monofase', model: 'WØRM HP290/7M', priceNote: 'Resa 6,68 kW, COP 4,55 (A7/W35)' },
+      { label: '9 kW monofase', model: 'WØRM HP290/9M', priceNote: 'Resa 8,71 kW, COP 5,09 (A7/W35)' },
+      { label: '12 kW monofase', model: 'WØRM HP290/12M', priceNote: 'Resa 11,83 kW, COP 5,03 (A7/W35)' },
+      { label: '12 kW trifase', model: 'WØRM HP290/12T', priceNote: 'Resa 11,83 kW, COP 5,03 (A7/W35)' },
+      { label: '15 kW monofase', model: 'WØRM HP290/15M', priceNote: 'Resa 14,45 kW, COP 4,61 (A7/W35)' },
+      { label: '15 kW trifase', model: 'WØRM HP290/15T', priceNote: 'Resa 14,45 kW, COP 4,61 (A7/W35)' }
+    ]
+  },
+  {
+    id: 'ucanpower-uhome', categoryName: 'Fotovoltaico', brandName: 'UcanPower', order: 1,
+    name: 'UcanPower UHome',
+    description: 'Sistema fotovoltaico con accumulo all-in-one: inverter monofase da 3 a 8 kW e batterie modulari da 5 a 40 kWh.',
+    longDescription: 'UHome è un sistema fotovoltaico domestico con accumulo di energia che integra inverter, caricabatterie e batterie in un unico sistema modulare precablato. L\'installazione è più semplice e veloce: i tempi si riducono fino al 50%.\n\nElegante e compatto, ha grado di protezione IP65 e può essere montato all\'interno o all\'esterno dell\'abitazione. La capacità si espande da 5 a 40 kWh aggiungendo moduli batteria LiFePO4 da 5,12 kWh, ed è prevista la funzione di backup in caso di blackout.\n\nIl monitoraggio dei parametri avviene in tempo reale tramite app, e la bassa rumorosità lo rende ideale per gli ambienti residenziali.',
+    features: [
+      'Inverter monofase da 3 a 8 kW integrato con le batterie',
+      'Batterie LiFePO4 modulari da 5,12 kWh, capacità da 5 a 40 kWh',
+      'Protezione IP65: installazione interna o esterna',
+      'Efficienza massima 97,6%',
+      'Funzione backup per le emergenze',
+      'Monitoraggio in tempo reale tramite app',
+      'Installazione plug&play, tempi ridotti fino al 50%'
+    ],
+    images: ['https://cosytec.it/assets/img/prodotti/ucanpower-uhome-3-moduli.png', 'https://cosytec.it/assets/img/prodotti/ucanpower-uhome-2-moduli.png'],
+    datasheetUrl: 'https://cosytec.it/assets/docs/ucanpower-uhome-scheda-tecnica.pdf',
+    variants: [
+      { label: '3 kW', model: 'UHome-3K0L', priceNote: 'Ingresso FV max 4.500 W' },
+      { label: '3,6 kW', model: 'UHome-3K6L', priceNote: 'Ingresso FV max 5.400 W' },
+      { label: '4 kW', model: 'UHome-4K0L', priceNote: 'Ingresso FV max 6.000 W' },
+      { label: '4,6 kW', model: 'UHome-4K6L', priceNote: 'Ingresso FV max 6.900 W' },
+      { label: '5 kW', model: 'UHome-5K0L', priceNote: 'Ingresso FV max 7.500 W' },
+      { label: '6 kW', model: 'UHome-6K0L', priceNote: 'Ingresso FV max 9.000 W' },
+      { label: '8 kW', model: 'UHome-8K0L', priceNote: 'Ingresso FV max 12.000 W' }
+    ]
+  },
+  {
+    id: 'stelbi-fotovoltaico-accumulo', categoryName: 'Fotovoltaico', brandName: 'Stelbi', order: 2,
+    name: 'Impianto fotovoltaico Stelbi con accumulo',
+    description: 'Impianto fotovoltaico chiavi in mano con moduli full black, inverter ibrido Stelbi e batteria di accumulo al litio.',
+    longDescription: 'Impianto fotovoltaico residenziale completo: moduli full black, inverter ibrido Stelbi, batteria di accumulo al litio LiFePO4 e quadri di protezione, con installazione e gestione delle pratiche a cura di Cosytec.\n\nGli inverter ibridi sono già programmati per le batterie, con zero immissione e lingua italiana, display touch-screen e antenna Wi-Fi di serie. Si può installare più potenza di moduli rispetto a quella dell\'inverter, per produrre più energia anche al mattino, alla sera e nelle giornate nuvolose.\n\nStelbi offre gratuitamente il monitoraggio e la diagnosi da remoto per 5/10 anni, con aggiornamenti firmware di inverter e batterie. Inverter e batterie hanno 10 anni di garanzia. Le configurazioni qui sotto sono quelle di riferimento: scrivici per dimensionare l\'impianto sui tuoi consumi.',
+    features: [
+      'Moduli fotovoltaici full black Topcon da 455 W',
+      'Inverter ibrido Stelbi con display touch-screen e Wi-Fi',
+      'Batteria al litio LiFePO4 serie Compact, IP65',
+      '10 anni di garanzia su inverter e batterie',
+      'Monitoraggio e diagnosi da remoto inclusi',
+      'Gestione delle pratiche e installazione a cura di Cosytec'
+    ],
+    images: ['https://cosytec.it/assets/img/prodotti/stelbi-fv-inverter-batteria.jpg', 'https://cosytec.it/assets/img/prodotti/stelbi-fv-casa.jpg'],
+    datasheetUrl: 'https://cosytec.it/assets/docs/stelbi-fotovoltaico-catalogo.pdf',
+    variants: [
+      { label: '3 kW monofase + accumulo 5 kWh', model: '8 moduli 455 W + inverter NEVOX 3,6 kW + batteria 5,12 kWh' },
+      { label: '6 kW monofase + accumulo 10 kWh', model: '14 moduli 455 W + inverter NEVOX 6 kW + batteria 10,24 kWh', price: 8499, priceNote: 'Chiavi in mano, IVA inclusa, con pratiche e allaccio Enel' },
+      { label: '10 kW trifase + accumulo 15 kWh', model: '22 moduli 455 W + inverter ZOOM 10 kW + batteria 14,3 kWh' },
+      { label: '20 kW trifase + accumulo 20 kWh', model: '44 moduli 455 W + inverter ZOOM 20 kW + 2 batterie 10,24 kWh' }
+    ]
+  }
+];
+
+async function importPdfProducts(){
+  if (!confirm('Importare i modelli dai cataloghi PDF?\n\n• Pompe di calore Stelbi WØRM (nuova categoria "Pompe di calore")\n• UcanPower UHome\n• Impianto fotovoltaico Stelbi con accumulo\n\nSenza prezzi (Su richiesta), con le schede tecniche PDF collegate. I modelli già presenti non vengono toccati.')) return;
+  const btn = document.getElementById('import-pdf-products-btn');
+  btn.disabled = true;
+  const created = [], skipped = [];
+  try {
+    const catSnap = await db.collection('categories').get();
+    const cats = [];
+    catSnap.forEach(d => cats.push({ id: d.id, ...d.data() }));
+    const brandSnap = await db.collection('brands').get();
+    const brands = [];
+    brandSnap.forEach(d => brands.push({ id: d.id, ...d.data() }));
+
+    for (const p of PDF_PRODUCTS) {
+      let cat = cats.find(c => c.name === p.categoryName);
+      if (!cat) {
+        const order = cats.reduce((m, c) => Math.max(m, c.order || 0), 0) + 1;
+        const ref = await db.collection('categories').add({ name: p.categoryName, order });
+        cat = { id: ref.id, name: p.categoryName, order };
+        cats.push(cat);
+      }
+      if (!brands.find(b => b.name === p.brandName && b.categoryId === cat.id)) {
+        const ref = await db.collection('brands').add({ name: p.brandName, categoryId: cat.id });
+        brands.push({ id: ref.id, name: p.brandName, categoryId: cat.id });
+      }
+
+      const seriesRef = db.collection('series').doc(p.id);
+      if ((await seriesRef.get()).exists) { skipped.push(p.name); continue; }
+      const prices = p.variants.map(v => v.price).filter(x => x != null);
+      await seriesRef.set({
+        categoryId: cat.id, tag: p.brandName, name: p.name, description: p.description,
+        longDescription: p.longDescription, features: p.features, images: p.images,
+        imageStyle: 'white', accent: '', datasheetUrl: p.datasheetUrl, documents: [],
+        minPrice: prices.length ? Math.min(...prices) : null, minCtPrice: null,
+        variantCount: p.variants.length, featured: false, order: p.order, active: true,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      const batch = db.batch();
+      p.variants.forEach((v, i) => {
+        batch.set(seriesRef.collection('variants').doc('v' + (i + 1)), {
+          label: v.label, model: v.model, price: v.price != null ? v.price : null,
+          priceNote: v.priceNote || '', order: i, active: true
+        });
+      });
+      await batch.commit();
+      created.push(p.name);
+    }
+    alert((created.length ? 'Importati:\n• ' + created.join('\n• ') : 'Nessun nuovo modello importato.') +
+      (skipped.length ? '\n\nGià presenti (non toccati):\n• ' + skipped.join('\n• ') : ''));
+    await loadCategoriesAdmin();
+    await loadBrandsAdmin();
+    loadSeriesListAdmin();
+  } catch (err) {
+    alert('Importazione non riuscita: ' + (err && err.message ? err.message : err));
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+const SEED_OFFERS = [
+  {
+    id: 'daikin-sensira-9000',
+    title: 'Daikin Sensira 9000 BTU',
+    description: 'Climatizzatore Daikin in classe A++, installazione compresa.',
+    badge: 'Bonus climatizzazione', price: 649, oldPrice: null, priceNote: 'installazione compresa',
+    imageUrl: 'assets/img/daikin-sensira.png', order: 1
+  },
+  {
+    id: 'daikin-sensira-12000',
+    title: 'Daikin Sensira 12000 BTU',
+    description: 'Climatizzatore Daikin in classe A++, installazione compresa.',
+    badge: 'Bonus climatizzazione', price: 699, oldPrice: null, priceNote: 'installazione compresa',
+    imageUrl: 'assets/img/daikin-sensira.png', order: 2
+  },
+  {
+    id: 'solare-termico-300',
+    title: 'Solare termico a circolazione naturale 300 litri',
+    description: 'Boiler da 300 litri con 2 collettori solari, fornitura e installazione incluse.',
+    badge: 'Con Conto Termico', price: 600, oldPrice: null, priceNote: 'installazione inclusa',
+    imageUrl: 'assets/img/offerte/solare-termico-300.png', order: 3
+  },
+  {
+    id: 'fotovoltaico-stelbi-6kw',
+    title: 'Impianto fotovoltaico Stelbi 6 kW con accumulo 10 kW',
+    description: 'Fornitura e installazione chiavi in mano, con gestione di tutte le pratiche e allaccio Enel.',
+    badge: 'Pratiche incluse', price: 8499, oldPrice: null, priceNote: 'IVA inclusa',
+    imageUrl: 'assets/img/offerte/fotovoltaico-stelbi.jpg', imageStyle: 'white', order: 4
+  },
+  {
+    id: 'caldaia-fondital-tenerife-24kw',
+    title: 'Caldaia Fondital Tenerife 24 kW',
+    description: 'Fornitura e installazione, registrazione al Catasto Termico e rilascio del libretto d\'impianto.',
+    badge: 'Anche a rate', price: 1199, oldPrice: null, priceNote: 'IVA inclusa',
+    imageUrl: 'assets/img/offerte/caldaia-fondital-tenerife.png', order: 5
+  }
+];
+
+async function importSeedOffers(){
+  if (!confirm('Importare le 5 offerte delle locandine (2 climatizzatori Daikin, solare termico, fotovoltaico, caldaia)? Se le hai già importate verranno solo riscritte, non duplicate.')) return;
+  try {
+    for (const { id, ...o } of SEED_OFFERS) {
+      await db.collection('offers').doc(id).set({
+        ...o, linkUrl: '', expiresAt: null, active: true,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }
+    loadOffersAdmin();
+  } catch (err) {
+    alert('Importazione non riuscita: ' + offerRulesError(err));
+  }
+}
+
+function initOffersForm(){
+  document.getElementById('import-offers-btn').addEventListener('click', importSeedOffers);
+  document.getElementById('import-pdf-products-btn').addEventListener('click', importPdfProducts);
+  const form = document.getElementById('offer-form');
+  const fileInput = document.getElementById('o-image-file');
+
+  fileInput.addEventListener('change', async () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+    const text = fileInput.closest('label').querySelector('span');
+    text.textContent = 'Caricamento...';
+    try {
+      setOfferImage(await compressImageToDataURL(file, 900, 250000));
+    } catch (err) {
+      alert('Caricamento non riuscito: ' + err.message);
+    } finally {
+      text.textContent = 'Carica da PC';
+      fileInput.value = '';
+    }
+  });
+
+  document.getElementById('o-image-remove').addEventListener('click', () => setOfferImage(''));
+  document.getElementById('offer-cancel-btn').addEventListener('click', resetOfferForm);
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const num = id => { const v = document.getElementById(id).value; return v === '' ? null : Number(v); };
+    const data = {
+      title: document.getElementById('o-title').value.trim(),
+      description: document.getElementById('o-description').value.trim(),
+      badge: document.getElementById('o-badge').value.trim(),
+      priceNote: document.getElementById('o-priceNote').value.trim(),
+      linkUrl: document.getElementById('o-linkUrl').value.trim(),
+      expiresAt: document.getElementById('o-expiresAt').value || null,
+      price: num('o-price'),
+      oldPrice: num('o-oldPrice'),
+      imageUrl: offerImageData,
+      order: parseInt(document.getElementById('o-order').value) || 0,
+      active: document.getElementById('o-active').checked,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    const btn = document.getElementById('offer-submit-btn');
+    btn.disabled = true;
+    try {
+      if (editingOfferId) await db.collection('offers').doc(editingOfferId).update(data);
+      else await db.collection('offers').add(data);
+      resetOfferForm();
+      loadOffersAdmin();
+    } catch (err) {
+      alert('Salvataggio non riuscito: ' + offerRulesError(err));
+    } finally {
+      btn.disabled = false;
+    }
+  });
+}
+
 function initAdminTabs(){
   const buttons = document.querySelectorAll('.tabbar button[data-panel]');
   const panels = document.querySelectorAll('.admin-panel');
@@ -743,6 +1106,7 @@ function initAdminTabs(){
       btn.classList.add('active');
       document.getElementById(btn.dataset.panel).style.display = 'block';
       if (btn.dataset.panel === 'panel-images') loadImageSlots();
+      if (btn.dataset.panel === 'panel-offers') loadOffersAdmin();
     });
   });
 }
@@ -951,5 +1315,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initAdminTabs();
   initCatalogSubTabs();
   initImagesPanel();
+  initOffersForm();
   initUserManagement();
 });
