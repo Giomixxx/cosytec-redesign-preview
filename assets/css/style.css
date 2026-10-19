@@ -317,6 +317,10 @@ nav.main-links a.active{ color:var(--flame-600); }
 .product-card .price{ font-family:'Poppins',sans-serif; font-weight:700; font-size:20px; color:var(--ink-900); }
 .product-card .price small{ font-weight:500; font-size:12px; color:var(--ink-300); }
 
+/* Immagini sostituibili da admin: nascoste finché non si sa quale mostrare */
+img[data-slot]{ transition:opacity .3s ease; }
+img[data-slot].slot-pending{ opacity:0; }
+
 /* Offerte del momento (Home) */
 .offers-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 360px)); gap:24px; justify-content:center; }
 .offer-card .ph{ z-index:0; }
