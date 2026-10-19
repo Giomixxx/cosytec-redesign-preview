@@ -350,6 +350,10 @@ footer{ background:var(--ink-900); color:var(--ink-300); padding-top:80px; }
 @media (max-width:900px){ .footer-grid{ grid-template-columns:1fr 1fr; } }
 @media (max-width:560px){ .footer-grid{ grid-template-columns:1fr; } }
 footer h4{ color:#fff; font-size:15px; margin-bottom:20px; }
+.footer-zones{ padding:20px 0; border-bottom:1px solid rgba(255,255,255,.08); font-size:13px; line-height:1.9; color:var(--ink-300); }
+.footer-zones b{ color:#fff; margin-right:4px; }
+.footer-zones a{ color:var(--ink-300); transition:color .2s; }
+.footer-zones a:hover{ color:#fff; }
 footer .logo{ color:#fff; margin-bottom:16px; }
 footer p{ color:var(--ink-300); font-size:14px; }
 footer ul li{ margin-bottom:12px; }
