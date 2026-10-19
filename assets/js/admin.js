@@ -930,13 +930,34 @@ const PDF_PRODUCTS = [
       'Monitoraggio e diagnosi da remoto inclusi',
       'Gestione delle pratiche e installazione a cura di Cosytec'
     ],
-    images: ['https://cosytec.it/assets/img/prodotti/stelbi-fv-inverter-batteria.jpg', 'https://cosytec.it/assets/img/prodotti/stelbi-fv-casa.jpg'],
+    images: ['https://cosytec.it/assets/img/offerte/fotovoltaico-stelbi.jpg', 'https://cosytec.it/assets/img/prodotti/stelbi-fv-inverter-batteria.jpg', 'https://cosytec.it/assets/img/prodotti/stelbi-fv-casa.jpg'],
+    replaceImagesIfFirstIs: 'https://cosytec.it/assets/img/prodotti/stelbi-fv-inverter-batteria.jpg',
     datasheetUrl: 'https://cosytec.it/assets/docs/stelbi-fotovoltaico-catalogo.pdf',
     variants: [
       { label: '3 kW monofase + accumulo 5 kWh', model: '8 moduli 455 W + inverter NEVOX 3,6 kW + batteria 5,12 kWh' },
       { label: '6 kW monofase + accumulo 10 kWh', model: '14 moduli 455 W + inverter NEVOX 6 kW + batteria 10,24 kWh', price: 8499, priceNote: 'Chiavi in mano, IVA inclusa, con pratiche e allaccio Enel' },
       { label: '10 kW trifase + accumulo 15 kWh', model: '22 moduli 455 W + inverter ZOOM 10 kW + batteria 14,3 kWh' },
       { label: '20 kW trifase + accumulo 20 kWh', model: '44 moduli 455 W + inverter ZOOM 20 kW + 2 batterie 10,24 kWh' }
+    ]
+  },
+  {
+    id: 'green-pellet', categoryName: 'Pellet', brandName: 'BioEnergy', order: 1,
+    name: 'Green Pellet',
+    description: 'Pellet di legno 100% vergine di conifere, certificato ENplus A1: chiaro, ad alta resa e a bassissimo residuo.',
+    longDescription: 'Green Pellet è un pellet di legno 100% vergine di conifere, proveniente da foreste gestite in modo ecosostenibile. Il colore chiaro e l\'elevata potenza lo rendono tra i pellet più performanti sul mercato.\n\nÈ certificato ENplus A1, al massimo livello di qualità: umidità non superiore all\'8%, ceneri e polveri non oltre lo 0,3%, potere calorifico inferiore di almeno 5,1 kWh/kg e durabilità di almeno il 98%. Il diametro è di 6 mm (±1 mm) e il residuo è basso.\n\nDisponibile in sacchi da 15 kg e in pedane da 72 sacchi. È in arrivo la prestagionale: contattaci per approfittare dell\'offerta.',
+    features: [
+      '100% legno vergine di conifere',
+      'Certificato ENplus A1 (IT 348)',
+      'Umidità ≤ 8% e ceneri ≤ 0,3%',
+      'Potere calorifico inferiore ≥ 5,1 kWh/kg',
+      'Durabilità ≥ 98%, diametro 6 mm ± 1 mm',
+      'Basso residuo e basso contenuto di polveri (≤ 0,3%)'
+    ],
+    images: ['https://cosytec.it/assets/img/prodotti/green-pellet.jpg'],
+    datasheetUrl: '',
+    variants: [
+      { label: 'Sacco da 15 kg', model: 'Green Pellet 15 kg', priceNote: 'Pellet 100% conifera ENplus A1' },
+      { label: 'Pedana da 72 sacchi (1.080 kg)', model: 'Green Pellet pedana 72 x 15 kg', priceNote: 'Prestagionale: contattaci per l\'offerta' }
     ]
   },
   {
@@ -982,7 +1003,7 @@ const PDF_PRODUCTS = [
 ];
 
 async function importPdfProducts(){
-  if (!confirm('Importare i nuovi modelli?\n\n• Pompe di calore Stelbi WØRM (nuova categoria "Pompe di calore")\n• UcanPower UHome\n• Impianto fotovoltaico Stelbi con accumulo\n• Caldaia Fondital Tenerife Next\n• Solare termico Fondital Sulpack Natural FPM\n\nCon le schede tecniche collegate. I modelli già presenti non vengono toccati.')) return;
+  if (!confirm('Importare i nuovi modelli?\n\n• Pompe di calore Stelbi WØRM (nuova categoria "Pompe di calore")\n• UcanPower UHome\n• Impianto fotovoltaico Stelbi con accumulo\n• Caldaia Fondital Tenerife Next\n• Solare termico Fondital Sulpack Natural FPM\n• Green Pellet (nuova categoria "Pellet")\n\nCon le schede tecniche collegate. I modelli già presenti non vengono toccati.')) return;
   const btn = document.getElementById('import-pdf-products-btn');
   btn.disabled = true;
   const created = [], skipped = [];
@@ -1008,7 +1029,17 @@ async function importPdfProducts(){
       }
 
       const seriesRef = db.collection('series').doc(p.id);
-      if ((await seriesRef.get()).exists) { skipped.push(p.name); continue; }
+      const existing = await seriesRef.get();
+      if (existing.exists) {
+        const imgs = existing.data().images || [];
+        if (p.replaceImagesIfFirstIs && imgs[0] === p.replaceImagesIfFirstIs) {
+          await seriesRef.update({ images: p.images });
+          created.push(p.name + ' (foto aggiornata)');
+        } else {
+          skipped.push(p.name);
+        }
+        continue;
+      }
       const prices = p.variants.map(v => v.price).filter(x => x != null);
       await seriesRef.set({
         categoryId: cat.id, tag: p.brandName, name: p.name, description: p.description,
@@ -1070,6 +1101,13 @@ const SEED_OFFERS = [
     imageUrl: 'assets/img/offerte/fotovoltaico-stelbi.jpg', imageStyle: 'white', order: 4
   },
   {
+    id: 'fotovoltaico-canpower-uhome', categoryName: 'Fotovoltaico',
+    title: 'Impianto fotovoltaico con accumulo e inverter Can Power',
+    description: 'Produci energia, accumuli quando serve e ricarichi la tua auto: inverter da 3 a 8 kW con batterie modulari e colonnina di ricarica.',
+    badge: 'Bonus colonnine fino all\'80%', price: null, oldPrice: null, priceNote: 'Contattaci per una consulenza gratuita',
+    imageUrl: 'assets/img/prodotti/ucanpower-uhome-3-moduli.png', order: 6
+  },
+  {
     id: 'caldaia-fondital-tenerife-24kw', categoryName: 'Caldaia',
     title: 'Caldaia Fondital Tenerife 24 kW',
     description: 'Fornitura e installazione, registrazione al Catasto Termico e rilascio del libretto d\'impianto.',
@@ -1079,7 +1117,7 @@ const SEED_OFFERS = [
 ];
 
 async function importSeedOffers(){
-  if (!confirm('Importare le 5 offerte delle locandine (2 climatizzatori Daikin, solare termico, fotovoltaico, caldaia)? Quelle già presenti non vengono modificate: viene solo collegata la loro sezione nella pagina Prodotti.')) return;
+  if (!confirm('Importare le 6 offerte delle locandine (2 climatizzatori Daikin, solare termico, 2 fotovoltaico, caldaia)? Quelle già presenti non vengono modificate: viene solo collegata la loro sezione nella pagina Prodotti.')) return;
   try {
     const catSnap = await db.collection('categories').get();
     const cats = [];
