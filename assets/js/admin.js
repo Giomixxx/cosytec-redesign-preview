@@ -792,8 +792,12 @@ async function loadImageSlots(){
           ${badge}
         </div>
         <div class="admin-row-actions" style="flex:1; min-width:260px; align-items:center;">
-          <input type="url" placeholder="https://..." value="${(ov && ov.url) ? ov.url : ''}" style="flex:1; min-width:180px; padding:10px 14px; border-radius:var(--radius-sm); border:1.5px solid var(--ink-100); font-size:13.5px;">
-          <button class="btn btn-primary btn-sm" onclick="saveSlotImageUrl('${page}','${slot.key}', this)">Salva</button>
+          <label class="upload-label" style="margin:0;">
+            <i class="fa-solid fa-upload"></i><span>Carica da PC</span>
+            <input type="file" accept="image/jpeg,image/png,image/webp" hidden onchange="uploadSlotImage('${page}','${slot.key}', this)">
+          </label>
+          <input type="url" placeholder="${(ov && ov.url && ov.url.startsWith('data:')) ? 'Immagine caricata dal PC' : 'oppure incolla un link https://...'}" value="${(ov && ov.url && !ov.url.startsWith('data:')) ? ov.url : ''}" style="flex:1; min-width:180px; padding:10px 14px; border-radius:var(--radius-sm); border:1.5px solid var(--ink-100); font-size:13.5px;">
+          <button class="btn btn-primary btn-sm" onclick="saveSlotImageUrl('${page}','${slot.key}', this)">Salva link</button>
           ${(ov && ov.url) ? `<button class="btn btn-sm" style="background:#e0413c;color:#fff;" onclick="resetSlotImage('${slot.key}')">Ripristina originale</button>` : ''}
         </div>
       </div>`;
@@ -818,6 +822,57 @@ async function saveSlotImageUrl(page, slotKey, btn){
     alert('Salvataggio non riuscito: ' + err.message);
     btn.disabled = false;
     btn.textContent = 'Salva';
+  }
+}
+
+function compressImageToDataURL(file, maxDim = 1600, maxChars = 700000){
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const objUrl = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(objUrl);
+      let scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+      let quality = 0.85;
+      for (let attempt = 0; attempt < 8; attempt++) {
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.max(1, Math.round(img.width * scale));
+        canvas.height = Math.max(1, Math.round(img.height * scale));
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        if (dataUrl.length <= maxChars) return resolve(dataUrl);
+        quality = Math.max(0.55, quality - 0.1);
+        scale *= 0.85;
+      }
+      reject(new Error('Immagine troppo pesante anche dopo la compressione.'));
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(objUrl);
+      reject(new Error('File non valido: scegli un\'immagine JPG, PNG o WebP.'));
+    };
+    img.src = objUrl;
+  });
+}
+
+async function uploadSlotImage(page, slotKey, fileInput){
+  const file = fileInput.files[0];
+  if (!file) return;
+  const label = fileInput.closest('label');
+  const text = label.querySelector('span');
+  text.textContent = 'Caricamento...';
+  try {
+    const url = await compressImageToDataURL(file);
+    await db.collection('site_images').doc(slotKey).set({
+      page, slotKey, url,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    loadImageSlots();
+  } catch (err) {
+    alert('Caricamento non riuscito: ' + err.message);
+    text.textContent = 'Carica da PC';
+    fileInput.value = '';
   }
 }
 
